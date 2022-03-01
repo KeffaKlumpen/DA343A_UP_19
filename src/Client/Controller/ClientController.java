@@ -1,0 +1,134 @@
+/*
+  Author: Joel Eriksson Sinclair
+  ID: ai7892
+  Study program: Sys 21h
+*/
+
+package Client.Controller;
+
+import Client.View.LoginDialog;
+import Client.View.MainFrame;
+import Model.ChatMessage;
+import Model.User;
+import Model.ServerUpdate;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+
+public class ClientController {
+
+    public User getMyLogin() {
+        return myLogin;
+    }
+
+    private User myLogin;
+
+    private MainFrame view;
+
+    private ServerConnection connection;
+
+    public ClientController(){
+        LoginDialog loginDialog = new LoginDialog(new Frame());
+        loginDialog.setVisible(true);
+
+        if(loginDialog.confirmed()){
+            String username = loginDialog.getUsername();
+            String imagePath = loginDialog.getImagePath();
+            myLogin = new User(username, new ImageIcon(imagePath));
+
+            System.out.println(myLogin);
+
+            String serverIp = loginDialog.getServername();
+            int serverPort = loginDialog.getServerport();
+            connectToServer(serverIp, serverPort);
+
+            System.out.println(connection);
+
+            view = new MainFrame(this, 800, 600);
+            view.setUserName(myLogin.getUsername());
+            view.setUserIcon(myLogin.getImageIcon());
+        }
+        else {
+            // Why do I need to do this??
+            // Process doesn't terminate normally after we use LoginDialog..
+            connection.interrupt();
+            System.exit(0);
+        }
+    }
+
+    public void connectToServer(String ip, int port){
+        connection = new ServerConnection(ip, port, this);
+        //sendConnectionMessage();
+    }
+    private void sendConnectionMessage(){
+        ChatMessage msg = new ChatMessage(myLogin);
+        connection.sendMessage(msg);
+    }
+    // TODO: Only show this button when we've timed-out...
+    public void reconnectToServer(){
+        connection = new ServerConnection(connection.getIp(), connection.getPort(), this);
+    }
+
+    public void sendMessage(){
+        // Create message, add to sendBuffer..
+        System.out.println("Send Pressed");
+
+        if(connection != null){
+            String msgText = view.getMessageText();
+            ImageIcon msgIcon = view.getMessageIcon();
+            String[] recipients = view.getMessageRecipients();
+            ChatMessage msg = new ChatMessage(myLogin, recipients, msgText, msgIcon);
+            connection.sendMessage(msg);
+        }
+    }
+
+    public void changeIcon(){
+        System.out.println("Change Icon Pressed");
+
+        view.setUserIcon(new ImageIcon(getIconPath()));
+    }
+
+    public void selectMessageIcon(){
+        view.setMessageIcon(new ImageIcon(getIconPath()));
+    }
+
+    private String getIconPath(){
+        String path = "files/avatars/ninja-head.png";
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setCurrentDirectory(new java.io.File("./files/avatars"));
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JPG & PNG Images", "jpg", "png");
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showOpenDialog(new JFrame());
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            path = fileChooser.getSelectedFile().getPath();
+        }
+
+        return path;
+    }
+
+
+
+    public static void main(String[] args) {
+        new ClientController();
+        new ClientController();
+        //new ClientController("realUser", new ImageIcon("files/avatars/monk-face.png"));
+        //new ClientController("trollololol", new ImageIcon("files/avatars/troll.png"));
+    }
+
+    public void serverUpdateRecieved(ServerUpdate serverUpdate) {
+        User[] connectedUsers = serverUpdate.getCurrentlyConnectedUsers();
+        int userCount = connectedUsers.length;
+        String[] usernames = new String[userCount];
+
+        for (int i = 0; i < userCount; i++) {
+            usernames[i] = connectedUsers[i].getUsername();
+        }
+
+        view.updateConnectedUsers(usernames);
+    }
+}
