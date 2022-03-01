@@ -53,4 +53,13 @@ public class User implements Serializable {
         sb.append('}');
         return sb.toString();
     }
+
+    public static User[] userListFromStrings(String[] strings, ImageIcon defaultIcon){
+        User[] users = new User[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            users[i] = new User(strings[i], defaultIcon);
+        }
+
+        return users;
+    }
 }

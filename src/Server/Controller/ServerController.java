@@ -17,7 +17,7 @@ public class ServerController {
 
     private Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
 
-    private Hashtable<User, Buffer<IMessage>> unsentMessages = new Hashtable<>();
+    private Hashtable<User, Buffer<Message>> unsentMessages = new Hashtable<>();
 
     private static int connectionTimeout;
 
@@ -59,8 +59,31 @@ public class ServerController {
         }
     }
 
+    private void sendOrBufferMessage(ChatMessage cm, User user){
+        if(connectedUsers.containsKey(user)){
+            connectedUsers.get(user).addToOutput(cm);
+        }
+        else {
+            // Add to unsent messages!
+        }
+    }
+
     public void incommingChatMessage(ChatMessage cm){
-        System.out.println("handleClientMessage() NOT IMPLEMENTED!");
+        cm.reachedServer();
+
+        User sender = cm.getSender();
+        sendOrBufferMessage(cm, sender);
+
+        for (User recipient: cm.getRecipients()) {
+            if(recipient.equals(sender))
+                continue;
+
+            sendOrBufferMessage(cm, recipient);
+        }
+
+        // TODO: Set chatMessage.reachedRecipientTime();
+        //chatMessage.setReachedRecipientTime() = currentTime..
+
         // Add to unsentMessages buffer<>...
         // broadcast() -> send to all recipients + sender... How to handle offline..
         // If any recipient or sender offline: Create new message with offline clients as recipients, and add to unsentBuffer..

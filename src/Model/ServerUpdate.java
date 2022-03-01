@@ -6,7 +6,7 @@
 
 package Model;
 
-public class ServerUpdate implements IMessage {
+public class ServerUpdate extends Message {
     private User newUser;
     private User[] currentlyConnectedUsers;
 
@@ -40,20 +40,4 @@ public class ServerUpdate implements IMessage {
         return sb.toString();
     }
 
-    @Override
-    public void setReachedServerTime() {
-
-    }
-    @Override
-    public void setReachedRecipientTime() {
-
-    }
-    @Override
-    public void getReachedServerTime() {
-
-    }
-    @Override
-    public void getReachedRecipientTime() {
-
-    }
 }
