@@ -51,42 +51,43 @@ public class ClientController {
         }
         else {
             // Why do I need to do this??
-            // Process doesn't terminate normally after we use LoginDialog..
-            connection.interrupt();
+            // Process doesn't terminate normally after we use LoginDialog...
             System.exit(0);
         }
     }
 
     public void connectToServer(String ip, int port){
         connection = new ServerConnection(ip, port, this);
-        //sendConnectionMessage();
     }
-    private void sendConnectionMessage(){
-        ChatMessage msg = new ChatMessage(myLogin);
-        connection.sendMessage(msg);
-    }
+
     // TODO: Only show this button when we've timed-out...
     public void reconnectToServer(){
         connection = new ServerConnection(connection.getIp(), connection.getPort(), this);
     }
 
-    public void sendMessage(){
+    public void sendChatMessage(){
         // Create message, add to sendBuffer..
         System.out.println("Send Pressed");
 
         if(connection != null){
             String msgText = view.getMessageText();
             ImageIcon msgIcon = view.getMessageIcon();
-            String[] recipients = view.getMessageRecipients();
+            String[] recipientNames = view.getMessageRecipients();
+            User[] recipients = User.userListFromStrings(recipientNames, new ImageIcon("files/avatars/troll.png"));
+
             ChatMessage msg = new ChatMessage(myLogin, recipients, msgText, msgIcon);
             connection.sendMessage(msg);
+
+            view.setMessageText("");
         }
     }
 
-    public void changeIcon(){
+    public void changeUserIcon(){
         System.out.println("Change Icon Pressed");
 
-        view.setUserIcon(new ImageIcon(getIconPath()));
+        ImageIcon icon = new ImageIcon(getIconPath());
+        myLogin.setImageIcon(icon);
+        view.setUserIcon(myLogin.getImageIcon());
     }
 
     public void selectMessageIcon(){
@@ -111,16 +112,7 @@ public class ClientController {
         return path;
     }
 
-
-
-    public static void main(String[] args) {
-        new ClientController();
-        new ClientController();
-        //new ClientController("realUser", new ImageIcon("files/avatars/monk-face.png"));
-        //new ClientController("trollololol", new ImageIcon("files/avatars/troll.png"));
-    }
-
-    public void serverUpdateRecieved(ServerUpdate serverUpdate) {
+    public void handleServerUpdate(ServerUpdate serverUpdate) {
         User[] connectedUsers = serverUpdate.getCurrentlyConnectedUsers();
         int userCount = connectedUsers.length;
         String[] usernames = new String[userCount];
@@ -129,6 +121,25 @@ public class ClientController {
             usernames[i] = connectedUsers[i].getUsername();
         }
 
-        view.updateConnectedUsers(usernames);
+        view.setConnectedUsers(usernames);
+    }
+
+    public void handleChatMessage(ChatMessage chatMessage){
+        chatMessage.reachedRecipient();
+
+        // TODO: Handle chat icons..
+        view.addChatMessage(chatMessage.toString());
+
+        System.out.println(myLogin.getUsername() + " Adding: " + chatMessage);
+    }
+
+
+    public static void main(String[] args) {
+        new ClientController();
+        new ClientController();
+        new ClientController();
+
+        //new ClientController("realUser", new ImageIcon("files/avatars/monk-face.png"));
+        //new ClientController("trollololol", new ImageIcon("files/avatars/troll.png"));
     }
 }

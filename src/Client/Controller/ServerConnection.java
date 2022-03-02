@@ -7,7 +7,6 @@
 package Client.Controller;
 
 import Model.*;
-import Server.Controller.PingProducer;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -51,10 +50,10 @@ public class ServerConnection {
         }
 
         System.out.println("ServerConnection created");
-        PingProducer pingProducer = new PingProducer(output.outputBuffer, 1500);
+        PingProducer pingProducer = new PingProducer(output.outputBuffer, 10000);
     }
 
-    public void sendMessage(IMessage msg){
+    public void sendMessage(Message msg){
         output.outputBuffer.put(msg);
     }
 
@@ -67,7 +66,7 @@ public class ServerConnection {
         private final Socket socket;
         private ObjectOutputStream oos;
 
-        private Buffer<IMessage> outputBuffer = new Buffer<>();
+        private Buffer<Message> outputBuffer = new Buffer<>();
 
         public OutputToServer(Socket socket) throws IOException {
             this.socket = socket;
@@ -90,7 +89,7 @@ public class ServerConnection {
 
             while (!isInterrupted()){
                 try {
-                    IMessage msg = outputBuffer.get();
+                    Message msg = outputBuffer.get();
                     oos.writeObject(msg);
                     oos.flush();
                 } catch (IOException e) {
@@ -123,13 +122,11 @@ public class ServerConnection {
 
             while (!isInterrupted()){
                 try {
-                    // if this is ConnectionUpdate, or if this is a new Message..?
                     Object o = ois.readObject();
-                    if (o instanceof ChatMessage) {
-                        ChatMessage msg = (ChatMessage) o;
-                    } else if (o instanceof ServerUpdate) {
-                        ServerUpdate serverUpdate = (ServerUpdate) o;
-                        controller.serverUpdateRecieved(serverUpdate);
+                    if (o instanceof ChatMessage msg) {
+                        controller.handleChatMessage(msg);
+                    } else if (o instanceof ServerUpdate serverUpdate) {
+                        controller.handleServerUpdate(serverUpdate);
                     }
                 } catch (EOFException e){
                     interrupt();

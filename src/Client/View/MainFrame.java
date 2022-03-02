@@ -11,6 +11,7 @@ import Client.Controller.ClientController;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
@@ -57,6 +58,9 @@ public class MainFrame extends JFrame {
     public String getMessageText(){
         return mainPanel.getSouthPanel().getTfMessageInput().getText();
     }
+    public void setMessageText(String text){
+        mainPanel.getSouthPanel().getTfMessageInput().setText(text);
+    }
     public ImageIcon getMessageIcon() {
         System.out.println("MainFrame.getMessageIcon - PLACEHOLDER: Not the right icon being sent!");
         return new ImageIcon("files/avatars/fish-monster.png");
@@ -65,17 +69,21 @@ public class MainFrame extends JFrame {
     }
 
     public String[] getMessageRecipients(){
-        mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().getSelectedValuesList();
-        mainPanel.getCenterPanel().getContactPanel().getContacts().getSelectedValuesList();
+        List<String> connectedUsersSelected = mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().getSelectedValuesList();
+        List<String> contactsSelected = mainPanel.getCenterPanel().getContactPanel().getContacts().getSelectedValuesList();
 
-        // TODO: Selected contacts + selected online -- REMOVE DUPLICATE in controller?
+        ArrayList<String> recipients = new ArrayList<>(connectedUsersSelected);
 
-        String[] recipients = new String[0];
+        for (String user : contactsSelected) {
+            if(!recipients.contains(user)){
+                recipients.add(user);
+            }
+        }
 
-        return recipients;
+        return recipients.toArray(new String[0]);
     }
 
-    public void updateConnectedUsers(String[] usernames){
+    public void setConnectedUsers(String[] usernames){
         DefaultListModel<String> listModel = mainPanel.getCenterPanel().getContactPanel().getConnectedUsersListModel();
 
         listModel.clear();
@@ -85,5 +93,9 @@ public class MainFrame extends JFrame {
         }
 
         mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().setSelectedIndex(0);
+    }
+
+    public void addChatMessage(String chatMessage){
+        mainPanel.getCenterPanel().getTaMessageViewer().append("\n" + chatMessage);
     }
 }

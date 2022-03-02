@@ -31,8 +31,8 @@ public class ClientConnection {
     private OutputToClient output;
     private InputFromClient input;
 
-    private Buffer<IMessage> inputBuffer = new Buffer<>();
-    private Buffer<IMessage> outputBuffer = new Buffer<>();
+    private Buffer<Message> inputBuffer = new Buffer<>();
+    private Buffer<Message> outputBuffer = new Buffer<>();
 
     public ClientConnection(Socket socket, ServerController controller) {
         this.socket = socket;
@@ -45,7 +45,7 @@ public class ClientConnection {
         System.out.println("Client created: " + socket);
     }
 
-    public void addToOutput(IMessage message){
+    public void addToOutput(Message message){
         outputBuffer.put(message);
     }
 
@@ -60,7 +60,7 @@ public class ClientConnection {
     }
 
     class InputFromClient extends Thread {
-        private Socket socket;
+        private final Socket socket;
         private ObjectInputStream ois;
 
         public InputFromClient(Socket socket){
@@ -89,13 +89,12 @@ public class ClientConnection {
                 System.out.println("Input running.");
 
                 try {
-                    IMessage msg = (IMessage) ois.readObject();
-                    if(msg instanceof ChatMessage){
-                        ChatMessage chatMessage = (ChatMessage) msg;
-                        System.out.println("From Client: " + chatMessage);
+                    Message msg = (Message) ois.readObject();
+                    if(msg instanceof ChatMessage chatMessage){
+                        System.out.println("From Client: " + chatMessage.toDebugString());
                         controller.incommingChatMessage(chatMessage);
                     }
-                    else if (msg instanceof PingMessage){
+                    else {
                         // ignoring Pings for now..
                     }
                 } catch (SocketException e){
@@ -120,7 +119,7 @@ public class ClientConnection {
     }
 
     class OutputToClient extends Thread{
-        private Socket socket;
+        private final Socket socket;
         private ObjectOutputStream ous;
 
         public OutputToClient(Socket socket){

@@ -35,7 +35,7 @@ public class SouthPanel extends JPanel {
         btnMyImageIcon = new JButton();
         btnMyImageIcon.setPreferredSize(new Dimension(height, height));
         btnMyImageIcon.addActionListener(e -> {
-            controller.changeIcon();
+            controller.changeUserIcon();
         });
         add(btnMyImageIcon);
 
@@ -58,7 +58,7 @@ public class SouthPanel extends JPanel {
         JButton btnSendMessage = new JButton("Send");
         btnSendMessage.setPreferredSize(new Dimension(150, height));
         btnSendMessage.addActionListener(e -> {
-            controller.sendMessage();
+            controller.sendChatMessage();
         });
         add(btnSendMessage);
     }
