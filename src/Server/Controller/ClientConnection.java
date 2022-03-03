@@ -92,10 +92,11 @@ public class ClientConnection {
                     Message msg = (Message) ois.readObject();
                     if(msg instanceof ChatMessage chatMessage){
                         System.out.println("From Client: " + chatMessage.toDebugString());
-                        controller.incommingChatMessage(chatMessage);
+                        controller.incomingChatMessage(chatMessage);
                     }
-                    else {
-                        // ignoring Pings for now..
+                    else if (msg instanceof ContactListUpdate contactListUpdate){
+                        System.out.println("Contact List update incomming..");
+                        controller.incomingContactListUpdate(contactListUpdate);
                     }
                 } catch (SocketException e){
                     System.out.println("Timing out client!");

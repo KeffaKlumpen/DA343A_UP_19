@@ -67,7 +67,12 @@ public class MainFrame extends JFrame {
         // TODO: Icon cast to ImageIcon?
         //return mainPanel.getSouthPanel().getBtnMessageIcon().getIcon();
     }
-
+    public String[] getSelectedContacts(){
+        return mainPanel.getCenterPanel().getContactPanel().getContacts().getSelectedValuesList().toArray(new String[0]);
+    }
+    public String[] getSelectedConnectedUsers(){
+        return mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().getSelectedValuesList().toArray(new String[0]);
+    }
     public String[] getMessageRecipients(){
         List<String> connectedUsersSelected = mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().getSelectedValuesList();
         List<String> contactsSelected = mainPanel.getCenterPanel().getContactPanel().getContacts().getSelectedValuesList();

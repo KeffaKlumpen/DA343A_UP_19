@@ -12,20 +12,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CenterPanel extends JPanel {
-    private ClientController controller;
-
-    private JTextArea taMessageViewer;
-
-    private ContactPanel contactPanel;
+    private final JTextArea taMessageViewer;
+    private final ContactPanel contactPanel;
 
     public CenterPanel(ClientController controller, int width, int height) {
-        this.controller = controller;
-
         taMessageViewer = new JTextArea();
         taMessageViewer.setPreferredSize(new Dimension(width / 3 * 2, height));
         add(taMessageViewer);
 
-        contactPanel = new ContactPanel(width / 3, height);
+        contactPanel = new ContactPanel(width / 3, height, controller);
         add(contactPanel);
     }
 

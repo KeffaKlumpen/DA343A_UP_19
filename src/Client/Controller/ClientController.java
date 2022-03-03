@@ -9,12 +9,14 @@ package Client.Controller;
 import Client.View.LoginDialog;
 import Client.View.MainFrame;
 import Model.ChatMessage;
+import Model.ContactListUpdate;
 import Model.User;
 import Model.ServerUpdate;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ClientController {
 
@@ -23,9 +25,7 @@ public class ClientController {
     }
 
     private User myLogin;
-
     private MainFrame view;
-
     private ServerConnection connection;
 
     public ClientController(){
@@ -112,7 +112,34 @@ public class ClientController {
         return path;
     }
 
+    // TODO: Forward this to a ContactManager class?
+    private ArrayList<String> contacts = new ArrayList<>();
+    public void addContacts(){
+        String[] selectedUsers = view.getSelectedConnectedUsers();
+        for (String user : selectedUsers) {
+            if(!contacts.contains(user)){
+                contacts.add(user);
+            }
+        }
+
+        // notify server of my new contacts...
+        User[] userContacts = User.userListFromStrings(contacts.toArray(new String[0]), new ImageIcon("files/avatars/troll.png"));
+        connection.sendMessage(new ContactListUpdate(myLogin, userContacts));
+    }
+    public void removeContacts(){
+        String[] selectedContacts = view.getSelectedContacts();
+        for (String user : selectedContacts) {
+            contacts.remove(user);
+        }
+
+        // notify server of my new contacts...
+        User[] userContacts = User.userListFromStrings(contacts.toArray(new String[0]), new ImageIcon("files/avatars/troll.png"));
+        connection.sendMessage(new ContactListUpdate(myLogin, userContacts));
+    }
+
     public void handleServerUpdate(ServerUpdate serverUpdate) {
+        serverUpdate.reachedRecipient();
+
         User[] connectedUsers = serverUpdate.getCurrentlyConnectedUsers();
         int userCount = connectedUsers.length;
         String[] usernames = new String[userCount];
@@ -123,7 +150,6 @@ public class ClientController {
 
         view.setConnectedUsers(usernames);
     }
-
     public void handleChatMessage(ChatMessage chatMessage){
         chatMessage.reachedRecipient();
 
@@ -131,6 +157,18 @@ public class ClientController {
         view.addChatMessage(chatMessage.toString());
 
         System.out.println(myLogin.getUsername() + " Adding: " + chatMessage);
+    }
+    public void handleContactListUpdate(ContactListUpdate contactListUpdate){
+        contactListUpdate.reachedRecipient();
+
+        User[] userContacts = contactListUpdate.getContacts();
+        ArrayList<String> contactNames = new ArrayList<>();
+        for (int i = 0; i < userContacts.length; i++) {
+            contactNames.add(userContacts[i].getUsername());
+        }
+
+        contacts = contactNames;
+        view.setContacts(contacts.toArray(new String[0])); // do this when the server sends me my new contacts...
     }
 
 

@@ -17,8 +17,8 @@ import java.util.LinkedList;
 public class ServerController {
 
     private Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
-
     private Hashtable<User, LinkedList<Message>> unsentMessageBuffers = new Hashtable<>();
+    private Hashtable<User, User[]> contactLists = new Hashtable<>();
 
     private static int connectionTimeout;
 
@@ -40,6 +40,9 @@ public class ServerController {
             old = null;
         }
         broadcastServerUpdate(user);
+
+        // TODO: Load from file: users contactList.
+        sendContactListUpdate(user);
 
         sendUnsentMessages(user);
 
@@ -83,6 +86,9 @@ public class ServerController {
             LinkedList<Message> unsentQueue = unsentMessageBuffers.get(user);
             while (unsentQueue.size() > 0){
                 Message message = unsentQueue.removeFirst();
+                if(message instanceof ChatMessage cm){
+                    cm.setMsgText("<OLD> " + cm.getMsgText());
+                }
                 connectedUsers.get(user).addToOutput(message);
             }
         }
@@ -90,7 +96,7 @@ public class ServerController {
 
     /* TODO: This is currently being executed from the thread belonging to ClientConnection.InputFromClient.
         A lot of ServerController stuff could maybe run on separate thread? */
-    public void incommingChatMessage(ChatMessage cm){
+    public void incomingChatMessage(ChatMessage cm){
         cm.reachedServer();
 
         User sender = cm.getSender();
@@ -101,6 +107,25 @@ public class ServerController {
                 continue;
 
             sendOrBufferMessage(cm, recipient);
+        }
+    }
+
+    public void incomingContactListUpdate(ContactListUpdate clu) {
+        clu.reachedServer();
+
+        User user = clu.getUser();
+
+        contactLists.put(user, clu.getContacts());
+        // TODO: Write to file..
+
+        sendContactListUpdate(user);
+    }
+    private void sendContactListUpdate(User user){
+        if(contactLists.containsKey(user)){
+            if(connectedUsers.containsKey(user)){
+                ContactListUpdate clu = new ContactListUpdate(user, contactLists.get(user));
+                connectedUsers.get(user).addToOutput(clu);
+            }
         }
     }
 

@@ -127,6 +127,8 @@ public class ServerConnection {
                         controller.handleChatMessage(msg);
                     } else if (o instanceof ServerUpdate serverUpdate) {
                         controller.handleServerUpdate(serverUpdate);
+                    } else if (o instanceof ContactListUpdate contactListUpdate){
+                        controller.handleContactListUpdate(contactListUpdate);
                     }
                 } catch (EOFException e){
                     interrupt();
