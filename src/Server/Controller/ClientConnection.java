@@ -16,14 +16,14 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class ClientConnection {
+    private User user;
+
     public User getUser() {
         return user;
     }
     public void setUser(User user) {
         this.user = user;
     }
-
-    private User user;
 
     private Socket socket;
     private ServerController controller;

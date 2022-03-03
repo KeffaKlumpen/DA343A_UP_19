@@ -12,21 +12,22 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 public class ServerController {
 
     private Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
 
-    private Hashtable<User, Buffer<Message>> unsentMessages = new Hashtable<>();
+    private Hashtable<User, LinkedList<Message>> unsentMessageBuffers = new Hashtable<>();
 
     private static int connectionTimeout;
 
+    public ServerController(int port){
+        this(port, 5000);
+    }
     public ServerController(int port, int connectionTimeout){
         ServerController.connectionTimeout = connectionTimeout;
         new ConnectionListener(port, this).start();
-    }
-    public ServerController(int port){
-        this(port, 5000);
         // start CLI etc.
     }
 
@@ -40,9 +41,10 @@ public class ServerController {
         }
         broadcastServerUpdate(user);
 
+        sendUnsentMessages(user);
+
         System.out.println(connectedUsers);
     }
-
     public synchronized void removeConnection(ClientConnection clientConnection){
         System.out.println("Removing connection: " + clientConnection);
         connectedUsers.remove(clientConnection.getUser());
@@ -59,15 +61,35 @@ public class ServerController {
         }
     }
 
-    private void sendOrBufferMessage(ChatMessage cm, User user){
+    // Either put the message to the ClientConnections output, or in the unsentMessages buffer.
+    private synchronized void sendOrBufferMessage(ChatMessage cm, User user){
         if(connectedUsers.containsKey(user)){
             connectedUsers.get(user).addToOutput(cm);
         }
         else {
-            // Add to unsent messages!
+            if(!unsentMessageBuffers.containsKey(user)){
+                unsentMessageBuffers.put(user, new LinkedList<>());
+            }
+            unsentMessageBuffers.get(user).addLast(cm);
         }
     }
 
+    private synchronized void sendUnsentMessages(User user){
+        System.out.println("Checking for unsent messages to: " + user.getUsername());
+
+        if(unsentMessageBuffers.containsKey(user)){
+            System.out.println("Sending unsent messages!");
+
+            LinkedList<Message> unsentQueue = unsentMessageBuffers.get(user);
+            while (unsentQueue.size() > 0){
+                Message message = unsentQueue.removeFirst();
+                connectedUsers.get(user).addToOutput(message);
+            }
+        }
+    }
+
+    /* TODO: This is currently being executed from the thread belonging to ClientConnection.InputFromClient.
+        A lot of ServerController stuff could maybe run on separate thread? */
     public void incommingChatMessage(ChatMessage cm){
         cm.reachedServer();
 
@@ -80,15 +102,6 @@ public class ServerController {
 
             sendOrBufferMessage(cm, recipient);
         }
-
-        // TODO: Set chatMessage.reachedRecipientTime();
-        //chatMessage.setReachedRecipientTime() = currentTime..
-
-        // Add to unsentMessages buffer<>...
-        // broadcast() -> send to all recipients + sender... How to handle offline..
-        // If any recipient or sender offline: Create new message with offline clients as recipients, and add to unsentBuffer..
-        //
-        // unsent = HashMap <User, Buffer<ChatMessage>
     }
 
     class ConnectionListener extends Thread {
@@ -122,10 +135,6 @@ public class ServerController {
                 }
             }
         }
-    }
-
-    class ChatMessageConsumer extends Thread {
-
     }
 
     public static void main(String[] args) {
