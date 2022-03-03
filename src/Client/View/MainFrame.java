@@ -94,6 +94,17 @@ public class MainFrame extends JFrame {
 
         mainPanel.getCenterPanel().getContactPanel().getConnectedUsers().setSelectedIndex(0);
     }
+    public void setContacts(String[] usernames){
+        DefaultListModel<String> listModel = mainPanel.getCenterPanel().getContactPanel().getContactsListModel();
+
+        listModel.clear();
+
+        for (String username : usernames) {
+            listModel.addElement(username);
+        }
+
+        mainPanel.getCenterPanel().getContactPanel().getContacts().setSelectedIndex(0);
+    }
 
     public void addChatMessage(String chatMessage){
         mainPanel.getCenterPanel().getTaMessageViewer().append("\n" + chatMessage);
