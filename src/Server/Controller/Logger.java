@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-// TODO: Implement function for seperate logs. (One for network, one for thread stuff, one for...?)
+// TODO: Implement function for separate logs. (One for network, one for thread stuff, one for...?)
 /**
  * Creates a .log file for each server execution.
  * <p>Log files are named uuuuMMdd-HHmmss-uuuuMMdd-HHmmss, representing the first and last log made to this file.</p>
@@ -29,8 +29,6 @@ public class Logger {
 
     private String lastFilePath;
 
-    private File currentFile;
-
     private static Logger getInstance(){
         if(instance == null){
             instance = new Logger();
@@ -40,25 +38,31 @@ public class Logger {
 
     private Logger(){
         logPrefix = getCurrentDateTime(fileNameFormatter) + "_";
-        currentFile = new File("logs/" + logPrefix + ".log");
 
+        File directory = new File("logs/");
+        File logFile = new File(directory, logPrefix + ".log");
         try {
-            if(!currentFile.createNewFile()){
-                throw new IOException("LogFile with that name already exists!");
+            if (!directory.exists()) {
+                if (!directory.mkdir())
+                    throw new IOException("Couldn't create directory.");
             }
+
+            if (!logFile.exists()) {
+                if (!logFile.createNewFile())
+                    throw new IOException("Couldn't create log file.");
+            }
+
+            lastFilePath = logFile.getPath();
         }
         catch (IOException e){
             e.printStackTrace();
-        }
-        finally {
-            lastFilePath = currentFile.getPath();
         }
     }
 
     /**
      * Writes the logEntry to the currently active .log file.
      * Appends the current DateTime as a prefix.
-     * @param logEntry
+     * @param logEntry String to be logged.
      */
     public static void log(String logEntry){
         getInstance().logToFile(logEntry);
@@ -67,7 +71,7 @@ public class Logger {
     /**
      * Writes the logEntries to the currently active .log file.
      * Appends the current DateTime as a prefix to each row.
-     * @param logEntries
+     * @param logEntries Array of strings to be logged.
      */
     public static void log(String[] logEntries){
         Logger logger = getInstance();
@@ -121,7 +125,7 @@ public class Logger {
      * Adds the line "I am logging!".
      * Waits for user-input, and then adds another line before closing.
      * </p>
-     * @param args
+     * @param args args
      */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);

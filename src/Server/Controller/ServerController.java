@@ -17,9 +17,9 @@ import java.util.LinkedList;
 
 public class ServerController {
 
-    private Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
-    private Hashtable<User, LinkedList<Message>> unsentMessageBuffers = new Hashtable<>();
-    private Hashtable<User, User[]> contactLists = new Hashtable<>();
+    private final Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
+    private final Hashtable<User, LinkedList<Message>> unsentMessageBuffers = new Hashtable<>();
+    private final Hashtable<User, User[]> contactLists;
 
     private static int connectionTimeout;
 
@@ -27,11 +27,12 @@ public class ServerController {
         this(port, 5000);
     }
     public ServerController(int port, int connectionTimeout){
+        contactLists = ContactFileManager.readContactLists();
+
         ServerController.connectionTimeout = connectionTimeout;
         new ConnectionListener(port, this).start();
+
         new MainFrame(this);
-        // start CLI etc.
-        contactLists = ContactFileManager.getInstance().readContactLists();
     }
 
     public synchronized void addConnection(ClientConnection clientConnection, User user){
@@ -40,14 +41,14 @@ public class ServerController {
         ClientConnection old = connectedUsers.put(user, clientConnection);
         if(old != null){
             System.out.println("Removing old connection..");
+            // Does this even do anything?
             old = null;
         }
-        broadcastServerUpdate(user);
 
-        // TODO: Load from file: users contactList.
         sendContactListUpdate(user);
-
         sendUnsentMessages(user);
+
+        broadcastServerUpdate(user);
 
         System.out.println(connectedUsers);
     }
@@ -119,8 +120,7 @@ public class ServerController {
         User user = clu.getUser();
 
         contactLists.put(user, clu.getContacts());
-        ContactFileManager.getInstance().writeContactLists(contactLists);
-        // TODO: Write to file..
+        ContactFileManager.writeContactLists(contactLists);
 
         sendContactListUpdate(user);
     }
@@ -137,7 +137,7 @@ public class ServerController {
 
         private ServerSocket serverSocket;
 
-        private ServerController controller;
+        private final ServerController controller;
 
         public ConnectionListener(int port, ServerController controller){
             this.controller = controller;
@@ -157,7 +157,7 @@ public class ServerController {
                 try {
                     Socket socket = serverSocket.accept();
                     socket.setSoTimeout(connectionTimeout);
-                    System.out.println("--New connection incomming--");
+                    System.out.println("--New connection incoming--");
                     new ClientConnection(socket, controller);
                 } catch (IOException e) {
                     e.printStackTrace();

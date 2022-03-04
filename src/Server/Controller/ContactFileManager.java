@@ -12,15 +12,7 @@ import java.io.*;
 import java.util.Hashtable;
 
 public class ContactFileManager {
-    private static ContactFileManager instance;
-
-    public static ContactFileManager getInstance() {
-        if(instance == null)
-            instance = new ContactFileManager();
-        return instance;
-    }
-
-    public void writeContactLists(Hashtable<User, User[]> contactLists){
+    public static void writeContactLists(Hashtable<User, User[]> contactLists){
         File directory = new File("data/");
         File dataFile = new File(directory, "contactLists.dat");
         try {
@@ -41,11 +33,9 @@ public class ContactFileManager {
         catch (IOException e){
             e.printStackTrace();
         }
-
-
     }
 
-    public Hashtable<User, User[]> readContactLists(){
+    public static Hashtable<User, User[]> readContactLists(){
         Hashtable<User, User[]> contactList = new Hashtable<>();
 
         File f = new File("data/contactLists.dat");

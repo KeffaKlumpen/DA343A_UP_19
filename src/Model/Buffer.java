@@ -9,7 +9,7 @@ package Model;
 import java.util.LinkedList;
 
 public class Buffer <T> {
-    private LinkedList<T> buffer = new LinkedList<>();
+    private final LinkedList<T> buffer = new LinkedList<>();
 
     public synchronized void put (T obj){
         buffer.addLast(obj);
