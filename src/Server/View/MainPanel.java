@@ -30,8 +30,8 @@ public class MainPanel extends JPanel {
         Border margin = BorderFactory.createEmptyBorder(6,6,6,6);
         setBorder(new CompoundBorder(border, margin));
 
-        centerPanel = new CenterPanel(controller,6*width/10, (8*height/10)-30, 6);
-        southPanel = new SouthPanel(controller, width,(height/8)+30, 6);
+        centerPanel = new CenterPanel(controller,6*width/10, (8*height/10)-100, 6);
+        southPanel = new SouthPanel(controller, width,(height/8)+100, 6);
         add(southPanel, BorderLayout.SOUTH);
         add(centerPanel, BorderLayout.CENTER);
 
