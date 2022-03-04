@@ -21,8 +21,8 @@ import java.util.Scanner;
  * <p>Log files are named uuuuMMdd-HHmmss-uuuuMMdd-HHmmss, representing the first and last log made to this file.</p>
  */
 public class Logger {
-    private static final DateTimeFormatter fileNameFormatter = DateTimeFormatter.ofPattern("uuuuMMdd-HHmmss");
-    private static final DateTimeFormatter logEntryFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("uuuuMMdd-HHmmss");
+    public static final DateTimeFormatter LOG_ENTRY_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 
     private static Logger instance;
     private final String logPrefix;
@@ -37,7 +37,7 @@ public class Logger {
     }
 
     private Logger(){
-        logPrefix = getCurrentDateTime(fileNameFormatter) + "_";
+        logPrefix = getCurrentDateTime(FILE_NAME_FORMATTER) + "_";
 
         File directory = new File("logs/");
         File logFile = new File(directory, logPrefix + ".log");
@@ -88,7 +88,7 @@ public class Logger {
                     new FileWriter(f, StandardCharsets.UTF_8, true))){
 
                 // FileOutputStream fos = new FileOutputStream(f, true);
-                bw.write(getCurrentDateTime(logEntryFormatter) + ": " + logEntry);
+                bw.write(getCurrentDateTime(LOG_ENTRY_FORMATTER) + ": " + logEntry);
                 bw.newLine();
                 bw.flush();
 
@@ -112,7 +112,7 @@ public class Logger {
     }
 
     private String getNewFileName(){
-        return logPrefix + getCurrentDateTime(fileNameFormatter) + ".log";
+        return logPrefix + getCurrentDateTime(FILE_NAME_FORMATTER) + ".log";
     }
 
     private static String getCurrentDateTime(DateTimeFormatter dtf){
@@ -132,5 +132,7 @@ public class Logger {
         Logger.log("I am logging!");
         sc.nextLine();
         Logger.log("I am logging 2!");
+
+
     }
 }
