@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class ServerConnection {
@@ -93,7 +94,8 @@ public class ServerConnection {
                     System.out.println("Sending Output From Client");
                     oos.writeObject(msg);
                     oos.flush();
-                } catch (IOException e) {
+                } catch (IOException e){
+                    interrupt();
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     interrupt();
@@ -132,7 +134,7 @@ public class ServerConnection {
                     } else if (o instanceof ContactListUpdate contactListUpdate){
                         controller.handleContactListUpdate(contactListUpdate);
                     }
-                } catch (EOFException e){
+                } catch (EOFException | SocketException e) {
                     interrupt();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -142,7 +144,6 @@ public class ServerConnection {
             }
 
             System.out.println("InputFromServer interrupted");
-            interrupt();
         }
     }
 
