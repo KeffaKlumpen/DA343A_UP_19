@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class ClientConnection {
     private User user;
@@ -99,7 +100,16 @@ public class ClientConnection {
                         controller.incomingContactListUpdate(contactListUpdate);
                     }
                 } catch (SocketException e){
-                    System.out.println("Timing out client!");
+                    System.out.println("SocketException: Timing out client!");
+                    try {
+                        socket.close();
+                        interrupt();
+                    } catch (IOException e2) {
+                        e.printStackTrace();
+                        e2.printStackTrace();
+                    }
+                } catch (SocketTimeoutException e){
+                    System.out.println("SocketTimeoutException: Timing out client!");
                     try {
                         socket.close();
                         interrupt();

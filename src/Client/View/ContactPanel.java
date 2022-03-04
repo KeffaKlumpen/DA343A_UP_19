@@ -18,25 +18,22 @@ public class ContactPanel extends JPanel {
     private DefaultListModel<String> connectedUsersListModel;
 
     public ContactPanel(int width, int height, ClientController controller) {
-        setLayout(new GridLayout(3, 1));
+        setLayout(new BorderLayout());
 
         connectedUsersListModel = new DefaultListModel<>();
         connectedUsers = new JList<>(connectedUsersListModel);
+        JScrollPane scrollerConnected = new JScrollPane(connectedUsers);
+        scrollerConnected.setPreferredSize(new Dimension(width, height / 11 * 5));
+        add(scrollerConnected, BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane(connectedUsers);
-        scrollPane.setPreferredSize(new Dimension(width, height / 11 * 5));
-        add(scrollPane);
-
-        // TODO: Dumma GridLayout gör dom lika stora.. BorderLayout?
         ContactButtons contactButtons = new ContactButtons(width, height / 11, controller);
-        add(contactButtons);
+        add(contactButtons, BorderLayout.CENTER);
 
         contactsListModel = new DefaultListModel<>();
         contacts = new JList<>(contactsListModel);
-
-        JScrollPane scrollPane2 = new JScrollPane(contacts);
-        scrollPane2.setPreferredSize(new Dimension(width, height / 11 * 5));
-        add(scrollPane2);
+        JScrollPane scrollerContacts = new JScrollPane(contacts);
+        scrollerContacts.setPreferredSize(new Dimension(width, height / 11 * 5));
+        add(scrollerContacts, BorderLayout.SOUTH);
     }
 
     public JList<String> getContacts() {

@@ -60,9 +60,21 @@ public class ClientController {
         connection = new ServerConnection(ip, port, this);
     }
 
-    // TODO: Only show this button when we've timed-out...
     public void reconnectToServer(){
+        // TODO: Only show this button when we've timed-out...
         connection = new ServerConnection(connection.getIp(), connection.getPort(), this);
+    }
+    public void disconnectFromServer(){
+        // TODO: Lol, no way this is good.
+        connection.interrupt();
+    }
+    public void selectServer(){
+        System.out.println("SELECT SERVER NOT IMPLEMENTED.");
+
+        // Prompt user with server details..
+
+        //disconnectFromServer();
+        //connectToServer(newIp, newPort);
     }
 
     public void sendChatMessage(){

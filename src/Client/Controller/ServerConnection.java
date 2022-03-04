@@ -90,11 +90,13 @@ public class ServerConnection {
             while (!isInterrupted()){
                 try {
                     Message msg = outputBuffer.get();
+                    System.out.println("Sending Output From Client");
                     oos.writeObject(msg);
                     oos.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
+                    interrupt();
                     e.printStackTrace();
                 }
             }
