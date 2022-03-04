@@ -29,6 +29,7 @@ public class ServerController {
         ServerController.connectionTimeout = connectionTimeout;
         new ConnectionListener(port, this).start();
         // start CLI etc.
+        contactLists = ContactFileManager.getInstance().readContactLists();
     }
 
     public synchronized void addConnection(ClientConnection clientConnection, User user){
@@ -116,6 +117,7 @@ public class ServerController {
         User user = clu.getUser();
 
         contactLists.put(user, clu.getContacts());
+        ContactFileManager.getInstance().writeContactLists(contactLists);
         // TODO: Write to file..
 
         sendContactListUpdate(user);
