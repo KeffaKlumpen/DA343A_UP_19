@@ -30,10 +30,19 @@ public class ContactFileManager {
         }
     }
 
-
     // TODO: Only readObject if the file exists.
     public Hashtable<User, User[]> readContactLists(){
         Hashtable<User, User[]> contactList = new Hashtable<>();
+
+        File f = new File("data/contactLists.dat");
+        if(!f.exists()){
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream("data/contactLists.dat")))){
             try {
                 contactList = (Hashtable<User, User[]>) ois.readObject();
