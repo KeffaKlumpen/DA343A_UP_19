@@ -27,7 +27,7 @@ public class CenterPanel extends JPanel {
         JScrollPane s = new JScrollPane(list);
         s.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        s.setPreferredSize(new Dimension(width+350, height-50));
+        s.setPreferredSize(new Dimension(width+200, height-50));
         add(s);
 
     }

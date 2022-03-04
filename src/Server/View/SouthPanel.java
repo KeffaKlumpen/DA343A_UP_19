@@ -10,7 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class SouthPanel extends JPanel implements ActionListener {
@@ -39,7 +45,14 @@ public class SouthPanel extends JPanel implements ActionListener {
     private void createImportantStuff(){
         //SKAPAR TVÅ PANELER FÖR BOXAR OCH SÖKKNAPP
         datesInnerPanel1 = new JPanel(new GridLayout(4, 4, 10, 10));
-        datesInnerPanel2 = new JPanel(new GridLayout(1, 1, 100, 100));
+        datesInnerPanel2 = new JPanel();
+
+        String hour = "Hour";
+        String minute = "Minute";
+        String second = "Second";
+        String day = "Day";
+        String month = "Month";
+        String year = "Year";
 
         //LITE LABELS FÖR TYDLIGHET
         JLabel startDateLabel = new JLabel("Start Date:  ", SwingConstants.RIGHT);
@@ -50,78 +63,92 @@ public class SouthPanel extends JPanel implements ActionListener {
         //BYGGER COMBOBOX FÖR ÅR(START)
         startYear = new JComboBox();
         startYear.setBackground(Color.WHITE);
+        startYear.addItem(year);
+        startYear.setSelectedItem(year);
         buildYearsList(startYear);
-        startYear.setSelectedIndex(10);
 
         //BYGGER COMBOBOX FÖR MÅNADER(START)
         startMonth = new JComboBox();
         startMonth.setBackground(Color.WHITE);
+        startMonth.addItem(month);
+        startMonth.setSelectedItem(month);
         buildMonthsList(startMonth);
-        startMonth.setSelectedIndex(startDate.get(Calendar.MONTH));
 
         //BYGGER COMBOBOX FÖR DAGAR(START)
         startDay = new JComboBox();
         startDay.setBackground(Color.WHITE);
+        startDay.addItem(day);
+        startDay.setSelectedItem(day);
         buildDaysList(startDate, startDay, startMonth);
-        startDay.setSelectedItem(Integer.toString(startDate.get(Calendar.DATE)));
 
         //BYGGER COMBOBOX FÖR ÅR(SLUT)
         endYear = new JComboBox();
         endYear.setBackground(Color.WHITE);
+        endYear.addItem(year);
+        endYear.setSelectedItem(year);
         buildYearsList(endYear);
-        endYear.setSelectedIndex(10);
 
         //BYGGER COMBOBOX FÖR MÅNADER(SLUT)
         endMonth = new JComboBox();
         endMonth.setBackground(Color.WHITE);
+        endMonth.addItem(month);
+        endMonth.setSelectedItem(month);
         buildMonthsList(endMonth);
-        endMonth.setSelectedIndex(endDate.get(Calendar.MONTH));
 
         //BYGGER COMBOBOX FÖR FÖR DAGAR(SLUT)
         endDay = new JComboBox();
         endDay.setBackground(Color.WHITE);
+        endDay.addItem(day);
+        endDay.setSelectedItem(day);
         buildDaysList(endDate, endDay, endMonth);
-        endDay.setSelectedItem(Integer.toString(endDate.get(Calendar.DATE)));
+
         //KNAPP FÖR ATT STARTA
         go = new JButton("SEARCH");
+        go.setPreferredSize(new Dimension(160,130));
 
         //BYGGER COMBOBOX FÖR STARTANDE TIDPUNKT (TIMME)
         startHour = new JComboBox();
         startHour.setBackground(Color.WHITE);
-        String hour = Integer.toString(endDate.get(Calendar.HOUR_OF_DAY));
+        startHour.addItem(hour);
         startHour.setSelectedItem(hour);
         buildHoursList(startHour);
 
         //BYGGER COMBOBOX FÖR STARTANDE TIDPUNKT (MINUT)
         startMinute = new JComboBox();
         startMinute.setBackground(Color.WHITE);
-        //startMinute.setSelectedIndex(Calendar.getInstance().get(Calendar.MINUTE));
+        startMinute.addItem(minute);
+        startMinute.setSelectedItem(minute);
         buildMinutesList(startMinute);
 
         //BYGGER COMBOBOX FÖR STARTANDE TIDPUNKT (SEKUND)
         startSeconds = new JComboBox();
         startSeconds.setBackground(Color.WHITE);
+        startSeconds.addItem(second);
+        startSeconds.setSelectedItem(second);
         buildMinutesList(startSeconds);
 
         //BYGGER COMBOBOX FÖR SISTA TIDPUNKT (TIMME)
         endHour = new JComboBox();
         endHour.setBackground(Color.WHITE);
+        endHour.addItem(hour);
+        endHour.setSelectedItem(hour);
         buildHoursList(endHour);
 
         //BYGGER COMBOBOX FÖR SISTA TIDPUNKT (MINUT)
         endMinute = new JComboBox();
         endMinute.setBackground(Color.WHITE);
-        endMinute.setSelectedItem(Integer.toString(endDate.get(Calendar.MINUTE)));
+        endMinute.addItem(minute);
+        endMinute.setSelectedItem(minute);
         buildMinutesList(endMinute);
 
         //BYGGER COMBOBOX FÖR SISTA TIDPUNKT (SEKUND)
         endSeconds = new JComboBox();
         endSeconds.setBackground(Color.WHITE);
-        endSeconds.setSelectedItem(Integer.toString(endDate.get(Calendar.MINUTE)));
+        endSeconds.addItem(second);
+        endSeconds.setSelectedItem(second);
         buildMinutesList(endSeconds);
 
-        //LÄGGER TILL COMBOBOXAR FÖR TID OCH KNAPPEN FÖR SÖK
-        // LÄGGER TILL COMBOBOXAR OCH LABEL TILL FÖRSTA PANELEN
+        // LÄGGER TILL COMBOBOXAR OCH LABEL I PANEL
         datesInnerPanel1.add(startDateLabel);
         datesInnerPanel1.add(startYear);
         datesInnerPanel1.add(startMonth);
@@ -138,11 +165,12 @@ public class SouthPanel extends JPanel implements ActionListener {
         datesInnerPanel1.add(endHour);
         datesInnerPanel1.add(endMinute);
         datesInnerPanel1.add(endSeconds);
+        //LÄGGER TILL
         datesInnerPanel2.add(go);
 
         //LÄGGER TILL PANELERNA PÅ HUVUDPANELEN
         add(datesInnerPanel1, BorderLayout.WEST);
-        add(datesInnerPanel2, BorderLayout.EAST);
+        add(datesInnerPanel2, BorderLayout.CENTER);
 
         //LÄGGER TILL LYSSNARE FÖR COMBOBOXAR OCH KNAPP (OBS EJ FIXAT ÄN!!!!!)
         go.addActionListener(this);
@@ -151,14 +179,13 @@ public class SouthPanel extends JPanel implements ActionListener {
     //LÄGGER TILL ÅRTAL I COMBOBOXARNA
     private void buildYearsList(JComboBox yearsList) {
         int currentYear = startDate.get(Calendar.YEAR);
-        for (int yearCount = currentYear - 10; yearCount <= currentYear; yearCount++){
+        for (int yearCount = currentYear; yearCount >= currentYear - 10; yearCount--){
             yearsList.addItem(Integer.toString(yearCount));
         }
     }
 
     //LÄGGER TILL MÅNADER I COMBOBOXARNA
     private void buildMonthsList(JComboBox monthsList) {
-        monthsList.removeAllItems();
         String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         for (int monthCount = 0; monthCount < months.length; monthCount++){
             monthsList.addItem(months[monthCount]);
@@ -167,7 +194,6 @@ public class SouthPanel extends JPanel implements ActionListener {
 
     //LÄGGER TILL DAGAR I COMBOBOXARNA
     private void buildDaysList(Calendar dateIn, JComboBox daysList, JComboBox monthsList) {
-        daysList.removeAllItems();
         dateIn.set(Calendar.MONTH, monthsList.getSelectedIndex());
         int lastDay = startDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int dayCount = 1; dayCount <= lastDay; dayCount++){
@@ -184,7 +210,6 @@ public class SouthPanel extends JPanel implements ActionListener {
     private void buildHoursList(JComboBox hoursList){
         for (int i = 0; i<24; i++){
             if(i<10){
-                //String num = Integer.toString(i);
                 String date = String.format("%02d", i);
                 hoursList.addItem(date);
             } else{
@@ -197,7 +222,6 @@ public class SouthPanel extends JPanel implements ActionListener {
     private void buildMinutesList(JComboBox minutesList){
         for (int i = 0; i<60; i++){
             if(i<10){
-                //String num = Integer.toString(i);
                 String minute = String.format("%02d", i);
                 minutesList.addItem(minute);
             } else{
@@ -241,16 +265,39 @@ public class SouthPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == go){
+            //BYGGER STRÄNGAR BASERAT PÅ VAD SOM STÅR I COMBOBOXARNA
             String startMonthNbr = getMonthAsNumber(startMonth.getSelectedItem());
             String endMonthNbr = getMonthAsNumber(endMonth.getSelectedItem());
-
             String startTime = String.format("%s-%s-%s %s:%s:%s",
                     startYear.getSelectedItem(), startMonthNbr, startDay.getSelectedItem(),
                     startHour.getSelectedItem(), startMinute.getSelectedItem(), startSeconds.getSelectedItem());
             String endTime = String.format("%s-%s-%s %s:%s:%s",
                     endYear.getSelectedItem(), endMonthNbr, endDay.getSelectedItem(),
                     endHour.getSelectedItem(), endMinute.getSelectedItem(), endSeconds.getSelectedItem());
-            System.out.println("SHOWING SERVER ACTIVITY \nFROM: " + startTime + "\nTO: " + endTime);
+            new fileReader(startTime, endTime);
         }
+    }
+
+
+    private class fileReader{
+        public fileReader(String start, String end){
+            System.out.println("SHOWING SERVER ACTIVITY \nFROM: " + start + "\nTO: " + end);
+        }
+        public void getLogs(String filename){
+            try{
+                FileInputStream fstream = new FileInputStream(filename);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+                String strLine;
+                /* read log line by line */
+                while ((strLine = br.readLine()) != null)   {
+                    /* parse strLine to obtain what you want */
+                    System.out.println (strLine);
+                }
+                fstream.close();
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+
     }
 }

@@ -7,6 +7,7 @@
 package Server.Controller;
 
 import Model.*;
+import Server.View.MainFrame;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -28,6 +29,7 @@ public class ServerController {
     public ServerController(int port, int connectionTimeout){
         ServerController.connectionTimeout = connectionTimeout;
         new ConnectionListener(port, this).start();
+        new MainFrame(this);
         // start CLI etc.
         contactLists = ContactFileManager.getInstance().readContactLists();
     }

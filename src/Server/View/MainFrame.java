@@ -3,7 +3,7 @@ import Server.Controller.ServerController;
 import javax.swing.*;
 
 public class MainFrame extends JFrame {
-    private int width = 1000;
+    private int width = 600;
     private int height = 600;
     private MainPanel mainPanel;
     private ServerController controller;
@@ -27,6 +27,9 @@ public class MainFrame extends JFrame {
         setResizable(false);
         pack();
         setVisible(true);
+    }
 
+    private void errorMessage(){
+        JOptionPane.showMessageDialog(null, "No server activity was found during the given timespan", "ERROR", JOptionPane.ERROR_MESSAGE);
     }
 }
