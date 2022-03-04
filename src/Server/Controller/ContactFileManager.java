@@ -20,38 +20,50 @@ public class ContactFileManager {
         return instance;
     }
 
-    // TODO: Make this actually create the file and directory if it doesn't exist..
     public void writeContactLists(Hashtable<User, User[]> contactLists){
-        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("data/contactLists.dat")))){
+        File directory = new File("data/");
+        File dataFile = new File(directory, "contactLists.dat");
+        try {
+            if(!directory.exists()){
+                if(!directory.mkdir())
+                    throw new IOException("Couldn't create directory.");
+            }
+
+            if(!dataFile.exists()){
+                if(!dataFile.createNewFile())
+                    throw new IOException("Couldn't create dataFile.");
+            }
+
+            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(dataFile)));
             oos.writeObject(contactLists);
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e){
             e.printStackTrace();
         }
+
+
     }
 
-    // TODO: Only readObject if the file exists.
     public Hashtable<User, User[]> readContactLists(){
         Hashtable<User, User[]> contactList = new Hashtable<>();
 
         File f = new File("data/contactLists.dat");
-        if(!f.exists()){
-            try {
-                f.createNewFile();
+        if(f.exists()){
+            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream("data/contactLists.dat")))){
+                try {
+                    contactList = (Hashtable<User, User[]>) ois.readObject();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream("data/contactLists.dat")))){
-            try {
-                contactList = (Hashtable<User, User[]>) ois.readObject();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        else {
+            System.err.println(f.getPath() + " -- File not found!");
         }
+
         return contactList;
     }
 }
