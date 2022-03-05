@@ -66,6 +66,16 @@ public class ChatMessage extends Message {
         return sb.toString();
     }
 
+    public String getRecipientsNames(){
+        String text = "";
+        text += recipients[0].getUsername();
+
+        for(int i = 1; i < recipients.length; i++){
+            text += ", " + recipients[i].getUsername();
+        }
+        return text;
+    }
+
     @Override
     public String toString() {
         /* TODO: Only add this if the difference is > 1 minute.

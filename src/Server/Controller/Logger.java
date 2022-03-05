@@ -6,6 +6,9 @@
 
 package Server.Controller;
 
+import Model.ChatMessage;
+import Model.User;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -65,7 +68,16 @@ public class Logger {
      * @param logEntry String to be logged.
      */
     public static void log(String logEntry){
+
         getInstance().logToFile(logEntry);
+    }
+
+    public static void logChatMessage(ChatMessage cm){
+        getInstance().logToFile("Meddelande (från " + cm.getSender().getUsername() + " till " + cm.getRecipientsNames() + ") med text: " + cm.getMsgText());
+    }
+
+    public static void logUserStatus(String username, String status){
+        getInstance().logToFile(username + " " + status);
     }
 
     /**

@@ -53,6 +53,7 @@ public class ClientConnection {
     private void inputConnectionDropped(){
         output.interrupt();
         controller.removeConnection(this);
+        Logger.logUserStatus(user.getUsername(), "offline");
     }
 
     private void notifyConnectionEstablished(User newUser){
@@ -76,8 +77,8 @@ public class ClientConnection {
 
                 ChatMessage chatMessage = (ChatMessage) ois.readObject();
                 User newUser = chatMessage.getSender();
-
                 notifyConnectionEstablished(newUser);
+                Logger.logUserStatus(newUser.getUsername(), "online");
 
                 System.out.println("Input thread processed UserInfo");
             } catch (IOException e) {
@@ -93,6 +94,7 @@ public class ClientConnection {
                     Message msg = (Message) ois.readObject();
                     if(msg instanceof ChatMessage chatMessage){
                         System.out.println("From Client: " + chatMessage.toDebugString());
+                        Logger.logChatMessage(chatMessage);
                         controller.incomingChatMessage(chatMessage);
                     }
                     else if (msg instanceof ContactListUpdate contactListUpdate){
