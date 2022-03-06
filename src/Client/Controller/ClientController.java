@@ -186,8 +186,8 @@ public class ClientController {
 
     public static void main(String[] args) {
         new ClientController();
-        new ClientController();
-        new ClientController();
+        //new ClientController();
+        //new ClientController();
 
         //new ClientController("realUser", new ImageIcon("files/avatars/monk-face.png"));
         //new ClientController("trollololol", new ImageIcon("files/avatars/troll.png"));
