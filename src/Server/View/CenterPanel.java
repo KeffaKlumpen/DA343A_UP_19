@@ -21,7 +21,7 @@ public class CenterPanel extends JPanel {
         setPreferredSize(new Dimension(width, height));
 
         list = new JList(); //data has type Object[]
-        Font font = new Font("Courier New", Font.PLAIN, 11);
+        Font font = new Font("Courier New", Font.PLAIN, 12);
         list.setFont(font);
 
         JScrollPane s = new JScrollPane(list);
@@ -29,6 +29,10 @@ public class CenterPanel extends JPanel {
         s.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         s.setPreferredSize(new Dimension(width+200, height-50));
         add(s);
+    }
 
+
+    public void showLogsInView(String[] str){
+        list.setListData(str);
     }
 }

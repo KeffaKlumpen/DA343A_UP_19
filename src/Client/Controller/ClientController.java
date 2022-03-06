@@ -143,7 +143,6 @@ public class ClientController {
         for (String user : selectedContacts) {
             contacts.remove(user);
         }
-
         // notify server of my new contacts...
         User[] userContacts = User.userListFromStrings(contacts.toArray(new String[0]), new ImageIcon("files/avatars/troll.png"));
         connection.sendMessage(new ContactListUpdate(myLogin, userContacts));

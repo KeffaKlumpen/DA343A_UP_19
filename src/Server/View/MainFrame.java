@@ -28,8 +28,4 @@ public class MainFrame extends JFrame {
         pack();
         setVisible(true);
     }
-
-    private void errorMessage(){
-        JOptionPane.showMessageDialog(null, "No server activity was found during the given timespan", "ERROR", JOptionPane.ERROR_MESSAGE);
-    }
 }

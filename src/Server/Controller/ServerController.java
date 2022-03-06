@@ -151,7 +151,7 @@ public class ServerController {
 
         @Override
         public void run() {
-            System.out.println("Server started!");
+            //System.out.println("Server started!");
 
 
             while (!isInterrupted()){
