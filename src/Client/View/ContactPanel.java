@@ -16,11 +16,9 @@ public class ContactPanel extends JPanel {
     private DefaultListModel<String> contactsListModel;
     private JList<String> connectedUsers;
     private DefaultListModel<String> connectedUsersListModel;
-    private JLabel status;
-    private JLabel status2;
-    private JLabel status3;
     private JPanel contactsP;
     private JPanel statusPanel;
+    private  JLabel[] arrayJLs;
 
     public ContactPanel(int width, int height, ClientController controller) {
         setLayout(new BorderLayout());
@@ -46,27 +44,18 @@ public class ContactPanel extends JPanel {
 
         statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.PAGE_AXIS));
-
         statusPanel.add(Box.createRigidArea(new Dimension(0,3)));
-        ImageIcon icon = new ImageIcon("files/status/online.png");
-        status = new JLabel(resizeStatusIcon(icon));
-        statusPanel.add(status);
 
-        statusPanel.add(Box.createRigidArea(new Dimension(0,3)));
-        ImageIcon icon2 = new ImageIcon("files/status/offline.png");
-        status2 = new JLabel(resizeStatusIcon(icon2));
-        statusPanel.add(status2);
-
-        statusPanel.add(Box.createRigidArea(new Dimension(0,3)));
-        ImageIcon icon3 = new ImageIcon("files/status/away.png");
-        status3 = new JLabel(resizeStatusIcon(icon3));
-        statusPanel.add(status3);
+        Icon offlineIcon = resizeStatusIcon(new ImageIcon("files/status/offline.png"));
+        arrayJLs = new JLabel[13];
+        for(int i = 0; i < 13; i++){
+            arrayJLs[i] = new JLabel();
+            arrayJLs[i].setIcon(offlineIcon);
+            statusPanel.add(Box.createRigidArea(new Dimension(0,3)));
+            statusPanel.add(arrayJLs[i]);
+        }
 
         contactsP.add(statusPanel, BorderLayout.WEST);
-
-
-
-
 
     }
 
@@ -89,4 +78,26 @@ public class ContactPanel extends JPanel {
         ImageIcon newIcon = new ImageIcon(newImg);
         return newIcon;
     }
+
+    public void updateStatusForContacts(){
+        ListModel contactList = contacts.getModel();
+        ListModel connectedList = connectedUsers.getModel();
+
+        Icon onlineIcon = resizeStatusIcon(new ImageIcon("files/status/online.png"));
+        Icon offlineIcon = resizeStatusIcon(new ImageIcon("files/status/offline.png"));
+
+        for(int i = 0; i < contactList.getSize(); i++){
+            for(int j = 0; j < connectedList.getSize(); j++){
+                if(contactList.getElementAt(i).toString().equals(connectedList.getElementAt(j).toString())){
+                    arrayJLs[i].setIcon(onlineIcon);
+                    break;
+
+                }else{
+                    arrayJLs[i].setIcon(offlineIcon);
+                }
+            }
+        }
+    }
+
+
 }

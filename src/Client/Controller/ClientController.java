@@ -182,6 +182,9 @@ public class ClientController {
         contacts = contactNames;
         view.setContacts(contacts.toArray(new String[0])); // do this when the server sends me my new contacts...
     }
+    public void updateStatusForContacts(){
+        view.updateStatusForContacts();
+    }
 
 
     public static void main(String[] args) {

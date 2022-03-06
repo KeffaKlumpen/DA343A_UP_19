@@ -114,4 +114,8 @@ public class MainFrame extends JFrame {
     public void addChatMessage(String chatMessage){
         mainPanel.getCenterPanel().getTaMessageViewer().append("\n" + chatMessage);
     }
+
+    public void updateStatusForContacts(){
+        mainPanel.getCenterPanel().getContactPanel().updateStatusForContacts();
+    }
 }
