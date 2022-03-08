@@ -47,12 +47,10 @@ public class MainFrame extends JFrame {
     }
 
     public void setMessageIcon(ImageIcon icon){
-        JButton btn = mainPanel.getSouthPanel().getBtnMyImageIcon();
-        mainPanel.getSouthPanel().getBtnMessageIcon().setIcon(new ImageIcon(
-                icon.getImage().getScaledInstance(btn.getWidth(), btn.getHeight(), Image.SCALE_FAST))
-        );
-
-        btn.repaint();
+        mainPanel.getSouthPanel().setMessageIcon(icon);
+    }
+    public ImageIcon getMessageIcon() {
+        return mainPanel.getSouthPanel().getMessageIcon();
     }
 
     public String getMessageText(){
@@ -61,12 +59,7 @@ public class MainFrame extends JFrame {
     public void setMessageText(String text){
         mainPanel.getSouthPanel().getTfMessageInput().setText(text);
     }
-    public ImageIcon getMessageIcon() {
-        System.out.println("MainFrame.getMessageIcon - PLACEHOLDER: Not the right icon being sent!");
-        return new ImageIcon("files/avatars/fish-monster.png");
-        // TODO: Icon cast to ImageIcon?
-        //return mainPanel.getSouthPanel().getBtnMessageIcon().getIcon();
-    }
+
     public String[] getSelectedContacts(){
         return mainPanel.getCenterPanel().getContactPanel().getContacts().getSelectedValuesList().toArray(new String[0]);
     }
@@ -111,8 +104,8 @@ public class MainFrame extends JFrame {
         mainPanel.getCenterPanel().getContactPanel().getContacts().setSelectedIndex(0);
     }
 
-    public void addChatMessage(String chatMessage){
-        mainPanel.getCenterPanel().getTaMessageViewer().append("\n" + chatMessage);
+    public void addChatMessage(String msgText, ImageIcon msgIcon){
+        mainPanel.getCenterPanel().getMessagePanel().addMessage(msgText, msgIcon);
     }
 
     public void updateStatusForContacts(){

@@ -92,7 +92,6 @@ public class ServerConnection {
                 try {
                     Message msg = outputBuffer.get();
                     System.out.println("Sending Output From Client");
-                    controller.updateStatusForContacts(); //Vet inte var jag ska lägga denna /Philip
                     oos.writeObject(msg);
                     oos.flush();
                 } catch (IOException e){

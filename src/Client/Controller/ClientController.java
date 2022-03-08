@@ -88,30 +88,33 @@ public class ClientController {
             User[] recipients = User.userListFromStrings(recipientNames, new ImageIcon("files/avatars/troll.png"));
 
             ChatMessage msg = new ChatMessage(myLogin, recipients, msgText, msgIcon);
-            connection.sendMessage(msg);
 
-            view.setMessageText("");
+            if(!msgText.equals("") || msgIcon != null){
+                connection.sendMessage(msg);
+                view.setMessageText("");
+                view.setMessageIcon(null);
+            }
         }
     }
 
     public void changeUserIcon(){
         System.out.println("Change Icon Pressed");
 
-        ImageIcon icon = new ImageIcon(getIconPath());
+        ImageIcon icon = getImageIcon("avatars");
         myLogin.setImageIcon(icon);
         view.setUserIcon(myLogin.getImageIcon());
     }
 
     public void selectMessageIcon(){
-        view.setMessageIcon(new ImageIcon(getIconPath()));
+        view.setMessageIcon(getImageIcon("emoji"));
     }
 
-    private String getIconPath(){
-        String path = "files/avatars/ninja-head.png";
+    private ImageIcon getImageIcon(String subFolder){
+        String path = "";
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setCurrentDirectory(new java.io.File("./files/avatars"));
+        fileChooser.setCurrentDirectory(new java.io.File("./files/" + subFolder));
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "JPG & PNG Images", "jpg", "png");
         fileChooser.setFileFilter(filter);
@@ -121,7 +124,7 @@ public class ClientController {
             path = fileChooser.getSelectedFile().getPath();
         }
 
-        return path;
+        return path != "" ? new ImageIcon(path) : null;
     }
 
     // TODO: Forward this to a ContactManager class?
@@ -164,8 +167,7 @@ public class ClientController {
     public void handleChatMessage(ChatMessage chatMessage){
         chatMessage.reachedRecipient();
 
-        // TODO: Handle chat icons..
-        view.addChatMessage(chatMessage.toString());
+        view.addChatMessage(chatMessage.toString(), chatMessage.getMsgIcon());
 
         System.out.println(myLogin.getUsername() + " Adding: " + chatMessage);
     }
@@ -179,12 +181,9 @@ public class ClientController {
         }
 
         contacts = contactNames;
-        view.setContacts(contacts.toArray(new String[0])); // do this when the server sends me my new contacts...
-    }
-    public void updateStatusForContacts(){
+        view.setContacts(contacts.toArray(new String[0]));
         view.updateStatusForContacts();
     }
-
 
     public static void main(String[] args) {
         new ClientController();

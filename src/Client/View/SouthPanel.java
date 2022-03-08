@@ -20,6 +20,9 @@ public class SouthPanel extends JPanel {
     private JButton btnMessageIcon;
     private JLabel lblMyUserName;
 
+    private ImageIcon msgIcon;
+    private ImageIcon userIcon;
+
     public SouthPanel(ClientController controller, int width, int height) {
         this.controller = controller;
         this.width = width;
@@ -73,7 +76,22 @@ public class SouthPanel extends JPanel {
     public JTextField getTfMessageInput() {
         return tfMessageInput;
     }
-    public JButton getBtnMessageIcon() {
-        return btnMessageIcon;
+
+    public void setMessageIcon(ImageIcon icon){
+        msgIcon = icon;
+
+        if(icon != null){
+            btnMessageIcon.setIcon(new ImageIcon(
+                    icon.getImage().getScaledInstance(btnMessageIcon.getWidth(), btnMessageIcon.getHeight(), Image.SCALE_FAST))
+            );
+        }else {
+            btnMessageIcon.setIcon(null);
+        }
+
+
+        btnMessageIcon.repaint();
+    }
+    public ImageIcon getMessageIcon() {
+        return msgIcon;
     }
 }

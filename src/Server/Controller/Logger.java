@@ -68,12 +68,16 @@ public class Logger {
      * @param logEntry String to be logged.
      */
     public static void log(String logEntry){
-
         getInstance().logToFile(logEntry);
     }
 
     public static void logChatMessage(ChatMessage cm){
-        getInstance().logToFile("Meddelande (från " + cm.getSender().getUsername() + " till " + cm.getRecipientsNames() + ") med text: " + cm.getMsgText());
+        String logEntry = String.format("Meddelande: (Från: %s till %s) - Text: %s",
+                cm.getSender().getUsername(), cm.getRecipientsNames(), cm.getMsgText());
+        if(cm.getMsgIcon() != null){
+            logEntry = logEntry.concat(" Bild: " + cm.getMsgIcon().toString());
+        }
+        getInstance().logToFile(logEntry);
     }
 
     public static void logUserStatus(String username, String status){
