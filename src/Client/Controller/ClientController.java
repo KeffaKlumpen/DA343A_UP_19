@@ -52,6 +52,7 @@ public class ClientController {
         else {
             // Why do I need to do this??
             // Process doesn't terminate normally after we use LoginDialog...
+            // TODO: Make us able to start the client even if the server connection isn't working.
             System.exit(0);
         }
     }
@@ -78,9 +79,6 @@ public class ClientController {
     }
 
     public void sendChatMessage(){
-        // Create message, add to sendBuffer..
-        System.out.println("Send Pressed");
-
         if(connection != null){
             String msgText = view.getMessageText();
             ImageIcon msgIcon = view.getMessageIcon();
@@ -90,9 +88,11 @@ public class ClientController {
             ChatMessage msg = new ChatMessage(myLogin, recipients, msgText, msgIcon);
 
             if(!msgText.equals("") || msgIcon != null){
-                connection.sendMessage(msg);
-                view.setMessageText("");
-                view.setMessageIcon(null);
+                if(recipients.length > 0){
+                    connection.sendMessage(msg);
+                    view.setMessageText("");
+                    view.setMessageIcon(null);
+                }
             }
         }
     }
