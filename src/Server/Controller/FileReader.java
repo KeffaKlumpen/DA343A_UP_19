@@ -112,14 +112,24 @@ public class FileReader {
                 currentLineDateStamp = currentLineDateStamp.replace(" ","");
                 int lineDate = Integer.parseInt(currentLineDateStamp);
 
-                if(lineDate < intervalEndDate && lineTime >= startSearch){
-                    finalList.add(strLine);
-                    continue;
+                if(intervalStartDate == intervalEndDate){
+                    if(lineTime >= startSearch && lineTime <= endSearch){
+                        finalList.add(strLine);
+                        continue;
+                    }
                 }
 
-                if(lineDate == intervalEndDate && lineTime <= endSearch){
-                    finalList.add(strLine);
-                    continue;
+                if(intervalStartDate != intervalEndDate){
+                    if(lineDate == intervalStartDate && lineTime >= startSearch){
+                        finalList.add(strLine);
+                        continue;
+                    } else if(lineDate > intervalStartDate && lineDate < intervalEndDate){
+                        finalList.add(strLine);
+                        continue;
+                    } else if(lineDate == intervalEndDate && lineTime <= endSearch){
+                        finalList.add(strLine);
+                        continue;
+                    }
                 }
             }
         } catch (IOException e) {

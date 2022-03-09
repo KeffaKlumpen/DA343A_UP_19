@@ -1,8 +1,6 @@
 package Server.View;
-
 import Server.Controller.ServerController;
 import Server.Controller.FileReader;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
