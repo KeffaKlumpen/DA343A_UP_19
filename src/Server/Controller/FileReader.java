@@ -13,11 +13,14 @@ public class FileReader {
     private int endSearch, intervalEndDate;
     private SouthPanel sp;
 
-    public FileReader(SouthPanel sp, String start, String end) {
+    public FileReader(){
+        finalList = new ArrayList<>();
+    }
+
+    public void readFiles(SouthPanel sp, String start, String end) {
         this.startTime = start;
         this.endTime = end;
         this.sp = sp;
-        finalList = sp.getFinalList();
 
         //FORMATTERAR LITE STRÄNGAR FÖR ATT KUNNA HITTA MATCHNINGAR I LOGS BASERAT PÅ DATUM
         String sortStart = startTime.substring(0, startTime.indexOf(" "));

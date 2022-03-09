@@ -27,7 +27,7 @@ public class SouthPanel extends JPanel implements ActionListener {
     private ServerController controller;
     private CenterPanel c;
     private String[] stringList;
-    private ArrayList<String> finalList;
+    private FileReader fr;
 
     public SouthPanel(CenterPanel c,ServerController controller, int width, int height, int margin) {
         this.controller = controller;
@@ -39,7 +39,7 @@ public class SouthPanel extends JPanel implements ActionListener {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(width, height));
         createImportantStuff();
-        finalList = new ArrayList<>();
+        fr = new FileReader();
     }
     private void createImportantStuff() {
         //SKAPAR TVÅ PANELER FÖR BOXAR OCH SÖKKNAPP
@@ -266,17 +266,14 @@ public class SouthPanel extends JPanel implements ActionListener {
         }
         return monthNbr;
     }
-    //LÄGGER TILL VALDA LOGGAR I EN ARRAY OCH PLACERAR I CENTERPANEL
 
     //GER FELMEDDELANDE OM INGA LOGGAR HITTAS
     private void errorMessage(){
         JOptionPane.showMessageDialog(null, "No server activity was found during the given timespan", "ERROR", JOptionPane.ERROR_MESSAGE);
     }
 
-    public ArrayList getFinalList(){
-        return finalList;
-    }
 
+    //LÄGGER TILL VALDA LOGGAR I EN ARRAY OCH PLACERAR I CENTERPANEL
     public void setLogs(ArrayList <String> list){
         stringList = new String [list.size()];
         for (int i = 0; i < list.size(); i++ ){
@@ -297,7 +294,7 @@ public class SouthPanel extends JPanel implements ActionListener {
             String endTime = String.format("%s-%s-%s %s:%s:%s",
                     endYear.getSelectedItem(), endMonthNbr, endDay.getSelectedItem(),
                     endHour.getSelectedItem(), endMinute.getSelectedItem(), endSeconds.getSelectedItem());
-            new FileReader(this, startTime, endTime);
+            fr.readFiles(this, startTime, endTime);
         }
     }
 }
