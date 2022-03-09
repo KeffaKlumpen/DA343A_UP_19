@@ -99,6 +99,8 @@ public class ClientConnection {
                     }
                     else if (msg instanceof ContactListUpdate contactListUpdate){
                         System.out.println("Contact List update incomming..");
+                        Logger.log(String.format("Recieved ContactList update from: %s",
+                                contactListUpdate.getUser().getUsername()));
                         controller.incomingContactListUpdate(contactListUpdate);
                     }
                 } catch (SocketException e){
@@ -150,9 +152,19 @@ public class ClientConnection {
             System.out.println("Output running.");
             while (!isInterrupted()){
                 try {
-                    Serializable o = outputBuffer.get();
-                    ous.writeObject(o);
+                    Message msg = outputBuffer.get();
+                    ous.writeObject(msg);
                     ous.flush();
+
+                    if(msg instanceof ChatMessage cm){
+                        Logger.log("Sending ChatMessage to " + getUser().getUsername());
+                    }
+                    if(msg instanceof ContactListUpdate clu){
+                        Logger.log("Sending ContactListUpdate to " + getUser().getUsername());
+                    }
+                    if(msg instanceof ServerUpdate su){
+                        Logger.log("Sending ServerUpdate to " + getUser().getUsername());
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
