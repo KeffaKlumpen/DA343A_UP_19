@@ -4,7 +4,7 @@
   Study program: Sys 21h
 */
 
-package Client.Controller;
+package Client.Model;
 
 import Model.Buffer;
 import Model.Message;

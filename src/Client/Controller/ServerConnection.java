@@ -6,6 +6,7 @@
 
 package Client.Controller;
 
+import Client.Model.PingProducer;
 import Model.*;
 
 import java.io.EOFException;
