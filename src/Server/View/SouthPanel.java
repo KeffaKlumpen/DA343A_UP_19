@@ -1,6 +1,7 @@
 package Server.View;
 
 import Server.Controller.ServerController;
+import Server.Controller.FileReader;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,8 +26,8 @@ public class SouthPanel extends JPanel implements ActionListener {
     private JPanel datesInnerPanel1, datesInnerPanel2;
     private ServerController controller;
     private CenterPanel c;
-    private ArrayList <String> finalList;
     private String[] stringList;
+    private ArrayList<String> finalList;
 
     public SouthPanel(CenterPanel c,ServerController controller, int width, int height, int margin) {
         this.controller = controller;
@@ -266,17 +267,22 @@ public class SouthPanel extends JPanel implements ActionListener {
         return monthNbr;
     }
     //LÄGGER TILL VALDA LOGGAR I EN ARRAY OCH PLACERAR I CENTERPANEL
-    private void setLogs(ArrayList <String> list){
+
+    //GER FELMEDDELANDE OM INGA LOGGAR HITTAS
+    private void errorMessage(){
+        JOptionPane.showMessageDialog(null, "No server activity was found during the given timespan", "ERROR", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public ArrayList getFinalList(){
+        return finalList;
+    }
+
+    public void setLogs(ArrayList <String> list){
         stringList = new String [list.size()];
         for (int i = 0; i < list.size(); i++ ){
             stringList[i] = list.get(i);
         }
         c.showLogsInView(stringList);
-    }
-
-    //GER FELMEDDELANDE OM INGA LOGGAR HITTAS
-    private void errorMessage(){
-        JOptionPane.showMessageDialog(null, "No server activity was found during the given timespan", "ERROR", JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
@@ -291,122 +297,7 @@ public class SouthPanel extends JPanel implements ActionListener {
             String endTime = String.format("%s-%s-%s %s:%s:%s",
                     endYear.getSelectedItem(), endMonthNbr, endDay.getSelectedItem(),
                     endHour.getSelectedItem(), endMinute.getSelectedItem(), endSeconds.getSelectedItem());
-            new fileReader(startTime, endTime);
-        }
-    }
-
-    private class fileReader {
-        private String startTime, endTime;
-        private File[] files;
-        private int startSearch, intervalStartDate;
-        private int endSearch, intervalEndDate;
-
-        public fileReader(String start, String end) {
-            this.startTime = start;
-            this.endTime = end;
-
-            //FORMATTERAR LITE STRÄNGAR FÖR ATT KUNNA HITTA MATCHNINGAR I LOGS BASERAT PÅ DATUM
-            String sortStart = startTime.substring(0, startTime.indexOf(" "));
-            String sortEnd = endTime.substring(0, endTime.indexOf(" "));
-            sortStart = sortStart.replace("-", "");
-            sortEnd = sortEnd.replace("-", "");
-
-            try{
-                intervalStartDate = Integer.parseInt(sortStart);
-            } catch (NumberFormatException e){
-                intervalStartDate = 20220101;
-            }
-
-            try{
-                intervalEndDate = Integer.parseInt(sortEnd);
-            } catch (NumberFormatException e){
-                intervalEndDate = 20221231;
-            }
-
-            //FORMATTERAR LITE STRÄNGAR FÖR ATT KUNNA HITTA MATCHNINGAR I LOGS BASERAT PÅ TID
-            String ts = startTime.substring(startTime.indexOf(" "));
-            ts = ts.replace(":","");
-            ts = ts.replace(" ","");
-
-            String te = endTime.substring(endTime.indexOf(" "));
-            te = te.replace(":","");
-            te = te.replace(" ","");
-
-            try{
-                startSearch = Integer.parseInt(ts);
-            }catch(NumberFormatException e){
-                startSearch = 000000;
-            }
-
-            try{
-                endSearch = Integer.parseInt(te);
-            }catch(NumberFormatException e){
-                endSearch = 235959;
-            }
-
-            //LITE GREJER FÖR ATT HÄMTA DIRECTORY
-            File directory = new File("logs");
-            if (!directory.exists() || !directory.isDirectory()) {
-                System.out.println(String.format("Couldn't find directory called logs"));
-                return;
-            }
-
-            //FILTRERAR BORT FILER SOM INTE ÄR AV .LOG TYP
-            FileFilter logFilefilter = new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    if (file.getName().endsWith(".log")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-
-            //SKAPAR ARRAY MED ALLA .LOG FILER I RÄTT DIRECTORY
-            files = directory.listFiles(logFilefilter);
-
-            //SKA LÄGGA TILL FILER I INTERVALLET I LISTAN;
-            for (File f : files) {
-                int filename = Integer.parseInt(f.getName().substring(0, f.getName().indexOf("-")));
-                if (filename >= intervalStartDate && filename <= intervalEndDate) {
-                    showCorrectLogs(f.getPath());
-                }
-            }
-            setLogs(finalList);
-            finalList.clear();
-        }
-
-        public void showCorrectLogs(String filename) {
-            try {
-                FileInputStream fstream = new FileInputStream(filename);
-                BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-                String strLine;
-                while ((strLine = br.readLine()) != null) {
-
-                    String currentLineTimeStamp = strLine.substring(strLine.indexOf(" "), strLine.indexOf(": "));
-                    currentLineTimeStamp = currentLineTimeStamp.replace(":","");
-                    currentLineTimeStamp = currentLineTimeStamp.replace(" ","");
-                    int lineTime = Integer.parseInt(currentLineTimeStamp);
-
-                    String currentLineDateStamp = strLine.substring(0, strLine.indexOf(" "));
-                    currentLineDateStamp = currentLineDateStamp.replace("-","");
-                    currentLineDateStamp = currentLineDateStamp.replace(" ","");
-                    int lineDate = Integer.parseInt(currentLineDateStamp);
-
-                    if(lineDate < intervalEndDate && lineTime >= startSearch){
-                        finalList.add(strLine);
-                        continue;
-                    }
-
-                    if(lineDate == intervalEndDate && lineTime <= endSearch){
-                        finalList.add(strLine);
-                        continue;
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println(e);
-            }
+            new FileReader(this, startTime, endTime);
         }
     }
 }
