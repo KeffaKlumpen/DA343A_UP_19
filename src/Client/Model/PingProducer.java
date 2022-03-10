@@ -9,6 +9,9 @@ package Client.Model;
 import Model.Buffer;
 import Model.Message;
 
+/**
+ * Placerar tomma Message-objekt för att undvika server-timeout.
+ */
 public class PingProducer extends Thread {
     private final Buffer<Message> outputBuffer;
     private final int delay;

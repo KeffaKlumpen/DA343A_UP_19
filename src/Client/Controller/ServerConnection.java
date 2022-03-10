@@ -17,6 +17,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+/**
+ * Represents the clients connection to a server.
+ * Responsible for transfering messages between its Input/Output and the ClientController.
+ */
 public class ServerConnection {
 
     public String getIp() {
@@ -33,6 +37,12 @@ public class ServerConnection {
     private InputFromServer input;
     private OutputToServer output;
 
+    /**
+     * Establish a TCP-connection to a server, using two threads - one for input, one for output.
+     * @param ip Ip-adress of the server.
+     * @param port Port to connect to.
+     * @param controller Reference to the ClientController.
+     */
     public ServerConnection(String ip, int port, ClientController controller) {
         this.ip = ip;
         this.port = port;
@@ -55,15 +65,25 @@ public class ServerConnection {
         PingProducer pingProducer = new PingProducer(output.outputBuffer, 10000);
     }
 
+    /**
+     * Add a Message-object to the outputs buffer.
+     * @param msg Message to be sent.
+     */
     public void sendMessage(Message msg){
         output.outputBuffer.put(msg);
     }
 
+    /**
+     * Interrupts the connection.
+     */
     public void interrupt(){
         output.interrupt();
         input.interrupt();
     }
 
+    /**
+     * Thread responsible for sending messages to the server.
+     */
     class OutputToServer extends Thread {
         private final Socket socket;
         private ObjectOutputStream oos;
@@ -75,6 +95,10 @@ public class ServerConnection {
             start();
         }
 
+        /**
+         * Send a message containing the users login-information.
+         * Then wait for messages to be put in the output-buffer, and send those.
+         */
         @Override
         public void run() {
             try {
@@ -108,6 +132,9 @@ public class ServerConnection {
         }
     }
 
+    /**
+     * Thread responsible for listening to the server and forward messages to the ClientController.
+     */
     class InputFromServer extends Thread {
         private final Socket socket;
         private ObjectInputStream ois;

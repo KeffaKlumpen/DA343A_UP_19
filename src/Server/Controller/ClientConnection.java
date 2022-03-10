@@ -16,6 +16,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * A TCP-Connection representing the servers connection to a client.
+ * Responsible for transfering messages between its Input/Output and the ServerController.
+ */
 public class ClientConnection {
     private User user;
 
@@ -35,10 +39,14 @@ public class ClientConnection {
     private Buffer<Message> inputBuffer = new Buffer<>();
     private Buffer<Message> outputBuffer = new Buffer<>();
 
+    /**
+     * Establishes a TCP-connection using two threads - one for input, one for output.
+     * @param socket Socket to read from/write to.
+     * @param controller Reference to the ServerController.
+     */
     public ClientConnection(Socket socket, ServerController controller) {
         this.socket = socket;
         this.controller = controller;
-        System.out.println("ClientConnection var: " + controller);
 
         output = new OutputToClient(socket);
         input = new InputFromClient(socket);
@@ -46,21 +54,37 @@ public class ClientConnection {
         System.out.println("Client created: " + socket);
     }
 
+    /**
+     * Places a Message-object into the output buffer.
+     * @param message Message to be sent.
+     */
     public void addToOutput(Message message){
         outputBuffer.put(message);
     }
 
+    /**
+     * Drops the output connection and notifies the controller that this connection has been dropped.
+     * Called when input is timed out.
+     */
     private void inputConnectionDropped(){
         output.interrupt();
         controller.removeConnection(this);
         Logger.logUserStatus(user.getUsername(), "offline");
     }
 
+    /**
+     * Notifies the server that this connection has been established.
+     * Called when input receives it's first message, containing the User-info of the connected user.
+     * @param newUser User-info of the connected user.
+     */
     private void notifyConnectionEstablished(User newUser){
         setUser(newUser);
         controller.addConnection(this, newUser);
     }
 
+    /**
+     * Thread responsible for listening to the client and forward messages to the ServerController.
+     */
     class InputFromClient extends Thread {
         private final Socket socket;
         private ObjectInputStream ois;
@@ -70,6 +94,10 @@ public class ClientConnection {
             start();
         }
 
+        /**
+         * First listens for a Message containing the connected users login-information.
+         * Then keeps listening for any other messages from the client.
+         */
         @Override
         public void run() {
             try {
@@ -133,6 +161,9 @@ public class ClientConnection {
         }
     }
 
+    /**
+     * Thread responsible for sending messages to the client.
+     */
     class OutputToClient extends Thread{
         private final Socket socket;
         private ObjectOutputStream ous;

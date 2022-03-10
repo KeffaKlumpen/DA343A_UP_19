@@ -15,6 +15,11 @@ import java.net.Socket;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+/**
+ * Main entry for the server-side program.
+ * Accepts new connections, keeps track of active connections and handles traffic between them.
+ * Also responsible for storing unsent messages and writing/reading users contact-info from disk.
+ */
 public class ServerController {
 
     private final Hashtable<User, ClientConnection> connectedUsers = new Hashtable<>();
@@ -23,9 +28,11 @@ public class ServerController {
 
     private static int connectionTimeout;
 
-    public ServerController(int port){
-        this(port, 5000);
-    }
+    /**
+     * Creates a ConnectionListner and intialize main UI.
+     * @param port Port to listen to
+     * @param connectionTimeout Time to wait for input from clients before timeout.
+     */
     public ServerController(int port, int connectionTimeout){
         contactLists = ContactFileManager.readContactLists();
 
@@ -35,6 +42,12 @@ public class ServerController {
         new MainFrame(this);
     }
 
+    /**
+     * Add a connection to the currently connected users, then notify all users of the currently connected users.
+     * Also send the matching contact list and any other unsent messages to the new connection.
+     * @param clientConnection Connection for the client to be added.
+     * @param user User-info of the client that is connecting.
+     */
     public synchronized void addConnection(ClientConnection clientConnection, User user){
         System.out.println("Adding connection: " + clientConnection);
 
@@ -52,6 +65,11 @@ public class ServerController {
 
         System.out.println(connectedUsers);
     }
+
+    /**
+     * Removes a connection from the currently connected users and then notifies all users of this change.
+     * @param clientConnection Connection for the client to be removed.
+     */
     public synchronized void removeConnection(ClientConnection clientConnection){
         System.out.println("Removing connection: " + clientConnection);
         connectedUsers.remove(clientConnection.getUser());
@@ -60,15 +78,24 @@ public class ServerController {
         System.out.println(connectedUsers);
     }
 
-    public synchronized void broadcastServerUpdate(User newUser){
+    /**
+     * Send a list of the currently connected users to all connected users.
+     * Also include an optional newly connected user, if this broadcast is triggered by a new connection.
+     * @param newlyConnected User-info of the newly connected user. Null if triggered by a disconnect.
+     */
+    public synchronized void broadcastServerUpdate(User newlyConnected){
         System.out.println("Broadcasting Server Update");
         for (ClientConnection con: connectedUsers.values()) {
-            ServerUpdate update = new ServerUpdate(connectedUsers.keySet().toArray(new User[0]), newUser);
+            ServerUpdate update = new ServerUpdate(connectedUsers.keySet().toArray(new User[0]), newlyConnected);
             con.addToOutput(update);
         }
     }
 
-    // Either put the message to the ClientConnections output, or in the unsentMessages buffer.
+    /**
+     * Either send the message to the client, or place it in the unsentMessages buffer.
+     * @param cm ChatMessage object to be sent.
+     * @param user User-info of the target client.
+     */
     private synchronized void sendOrBufferMessage(ChatMessage cm, User user){
         if(connectedUsers.containsKey(user)){
             connectedUsers.get(user).addToOutput(cm);
@@ -81,6 +108,10 @@ public class ServerController {
         }
     }
 
+    /**
+     * Sends any unsent messages to the target client.
+     * @param user User-info of the target client.
+     */
     private synchronized void sendUnsentMessages(User user){
         System.out.println("Checking for unsent messages to: " + user.getUsername());
 
@@ -100,6 +131,11 @@ public class ServerController {
 
     /* TODO: This is currently being executed from the thread belonging to ClientConnection.InputFromClient.
         A lot of ServerController stuff could maybe run on separate thread? */
+
+    /**
+     * Forward a ChatMessage from one client to it's recipients.
+     * @param cm ChatMessage to be sent.
+     */
     public void incomingChatMessage(ChatMessage cm){
         cm.reachedServer();
 
@@ -114,6 +150,10 @@ public class ServerController {
         }
     }
 
+    /**
+     * Updates the stored contact list-data using the ContactListUpdate's parameters.
+     * @param clu ContactListUpdate containing a user and it's contact-list.
+     */
     public void incomingContactListUpdate(ContactListUpdate clu) {
         clu.reachedServer();
 
@@ -124,6 +164,11 @@ public class ServerController {
 
         sendContactListUpdate(user);
     }
+
+    /**
+     * Sends the current contact list-data to a user.
+     * @param user User-info to send contact-list to.
+     */
     private void sendContactListUpdate(User user){
         if(contactLists.containsKey(user)){
             if(connectedUsers.containsKey(user)){
@@ -133,6 +178,10 @@ public class ServerController {
         }
     }
 
+    /**
+     * Separate thread responsible for listening and accepting new connections to the server.
+     * Creates a ClientConnection for each new connection.
+     */
     class ConnectionListener extends Thread {
 
         private ServerSocket serverSocket;

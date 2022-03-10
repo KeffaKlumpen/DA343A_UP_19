@@ -12,6 +12,10 @@ import java.io.*;
 import java.util.Hashtable;
 
 public class ContactFileManager {
+    /**
+     * Write a contactList hashtable to a .dat file, creates if it doesn't exist.
+     * @param contactLists Hashtable of Users and their contact-lists.
+     */
     public static void writeContactLists(Hashtable<User, User[]> contactLists){
         File directory = new File("data/");
         File dataFile = new File(directory, "contactLists.dat");
@@ -35,6 +39,10 @@ public class ContactFileManager {
         }
     }
 
+    /**
+     * Reads data from data/contactLists.dat. If the file is not found we return an empty hashtable.
+     * @return A Hashtable of Users and their contact-lists.
+     */
     public static Hashtable<User, User[]> readContactLists(){
         Hashtable<User, User[]> contactList = new Hashtable<>();
 

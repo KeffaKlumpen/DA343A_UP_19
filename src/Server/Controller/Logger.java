@@ -7,7 +7,6 @@
 package Server.Controller;
 
 import Model.ChatMessage;
-import Model.User;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +20,7 @@ import java.util.Scanner;
 // TODO: Implement function for separate logs. (One for network, one for thread stuff, one for...?)
 /**
  * Creates a .log file for each server execution.
- * <p>Log files are named uuuuMMdd-HHmmss-uuuuMMdd-HHmmss, representing the first and last log made to this file.</p>
+ * <p>Log files are named uuuuMMdd-HHmmss_uuuuMMdd-HHmmss, representing the first and last log made to this file.</p>
  */
 public class Logger {
     public static final DateTimeFormatter FILE_NAME_FORMATTER = DateTimeFormatter.ofPattern("uuuuMMdd-HHmmss");
@@ -39,6 +38,10 @@ public class Logger {
         return instance;
     }
 
+    /**
+     * Creates a .log file, named as "dateOfCreation_dateOfLastChange.log"
+     * Creates the ./logs/ directory if needed.
+     */
     private Logger(){
         logPrefix = getCurrentDateTime(FILE_NAME_FORMATTER) + "_";
 
@@ -64,13 +67,16 @@ public class Logger {
 
     /**
      * Writes the logEntry to the currently active .log file.
-     * Appends the current DateTime as a prefix.
      * @param logEntry String to be logged.
      */
     public static void log(String logEntry){
         getInstance().logToFile(logEntry);
     }
 
+    /**
+     * Logs the information of the ChatMessage to be sent to the currently active .log file.
+     * @param cm ChatMessage to be logged.
+     */
     public static void logChatMessage(ChatMessage cm){
         String logEntry = String.format("Meddelande: (Från: %s till %s) - Text: %s",
                 cm.getSender().getUsername(), cm.getRecipientsNames(), cm.getMsgText());
@@ -80,6 +86,11 @@ public class Logger {
         getInstance().logToFile(logEntry);
     }
 
+    /**
+     * Logs the current connection-status of a user to the currently active .log file.
+     * @param username Username of the user to be logged
+     * @param status Current connection-status of the user.
+     */
     public static void logUserStatus(String username, String status){
         getInstance().logToFile(username + " " + status);
     }
@@ -96,6 +107,11 @@ public class Logger {
         }
     }
 
+    /**
+     * Writes the logEntry to the currently active .log file.
+     * Appends the current DateTime as a prefix.
+     * @param logEntry String to be logged.
+     */
     private void logToFile(String logEntry){
         File f = new File(lastFilePath);
 
