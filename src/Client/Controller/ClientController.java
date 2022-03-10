@@ -161,7 +161,7 @@ public class ClientController {
             path = fileChooser.getSelectedFile().getPath();
         }
 
-        return path != "" ? new ImageIcon(path) : null;
+        return !path.equals("") ? new ImageIcon(path) : null;
     }
 
     // TODO: Forward this to a ContactManager class?
@@ -235,8 +235,8 @@ public class ClientController {
 
         User[] userContacts = contactListUpdate.getContacts();
         ArrayList<String> contactNames = new ArrayList<>();
-        for (int i = 0; i < userContacts.length; i++) {
-            contactNames.add(userContacts[i].getUsername());
+        for (User userContact : userContacts) {
+            contactNames.add(userContact.getUsername());
         }
 
         contacts = contactNames;

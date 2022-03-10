@@ -64,7 +64,7 @@ public class FileReader {
         //LITE GREJER FÖR ATT HÄMTA DIRECTORY
         File directory = new File("logs");
         if (!directory.exists() || !directory.isDirectory()) {
-            System.out.println(String.format("Couldn't find directory called logs"));
+            System.out.println("Couldn't find directory called logs");
             return;
         }
 
@@ -72,11 +72,7 @@ public class FileReader {
         FileFilter logFilefilter = new FileFilter() {
             @Override
             public boolean accept(File file) {
-                if (file.getName().endsWith(".log")) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return file.getName().endsWith(".log");
             }
         };
 
@@ -122,18 +118,15 @@ public class FileReader {
                 if(intervalStartDate != intervalEndDate){
                     if(lineDate == intervalStartDate && lineTime >= startSearch){
                         finalList.add(strLine);
-                        continue;
                     } else if(lineDate > intervalStartDate && lineDate < intervalEndDate){
                         finalList.add(strLine);
-                        continue;
                     } else if(lineDate == intervalEndDate && lineTime <= endSearch){
                         finalList.add(strLine);
-                        continue;
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }

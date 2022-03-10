@@ -39,7 +39,7 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj != null && obj instanceof User){
+        if(obj instanceof User){
             return username.equals(((User) obj).getUsername());
         }
         return false;
@@ -47,11 +47,10 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("username='").append(username).append('\'');
-        sb.append(", imageIcon=").append(imageIcon);
-        sb.append('}');
-        return sb.toString();
+        String sb = "User{" + "username='" + username + '\'' +
+                ", imageIcon=" + imageIcon +
+                '}';
+        return sb;
     }
 
     public static User[] userListFromStrings(String[] strings, ImageIcon defaultIcon){

@@ -182,7 +182,7 @@ public class ServerController {
      * Separate thread responsible for listening and accepting new connections to the server.
      * Creates a ClientConnection for each new connection.
      */
-    class ConnectionListener extends Thread {
+    static class ConnectionListener extends Thread {
 
         private ServerSocket serverSocket;
 

@@ -40,7 +40,7 @@ public class ChatMessagePanel extends JPanel {
         listModel.addElement(listItem);
     }
 
-    public class ChatListItem {
+    public static class ChatListItem {
         private final String msgText;
         private final ImageIcon msgIcon;
 
@@ -81,7 +81,7 @@ public class ChatMessagePanel extends JPanel {
 
             lblText.setText(chatListItem.getMsgText());
 
-            // TODO: How to make the panel re-size if we have no ImageIcon? - setPrefferedSize() didn't work..
+            // TODO: How to make the panel re-size if we have no ImageIcon? - setPreferredSize() didn't work..
             if(chatListItem.getMsgIcon() == null){
                 lblImage.setIcon(null);
             }

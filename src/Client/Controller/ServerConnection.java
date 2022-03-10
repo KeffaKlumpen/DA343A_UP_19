@@ -15,7 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 /**
  * Represents the clients connection to a server.
@@ -55,8 +54,6 @@ public class ServerConnection {
             System.out.println("Client 2.");
             input = new InputFromServer(socket);
             System.out.println("Client 3.");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,7 +87,7 @@ public class ServerConnection {
 
         private Buffer<Message> outputBuffer = new Buffer<>();
 
-        public OutputToServer(Socket socket) throws IOException {
+        public OutputToServer(Socket socket) {
             this.socket = socket;
             start();
         }
@@ -119,10 +116,7 @@ public class ServerConnection {
                     System.out.println("Sending Output From Client");
                     oos.writeObject(msg);
                     oos.flush();
-                } catch (IOException e){
-                    interrupt();
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (IOException | InterruptedException e){
                     interrupt();
                     e.printStackTrace();
                 }
@@ -139,7 +133,7 @@ public class ServerConnection {
         private final Socket socket;
         private ObjectInputStream ois;
 
-        public InputFromServer(Socket socket) throws IOException {
+        public InputFromServer(Socket socket) {
             this.socket = socket;
             start();
         }
@@ -164,9 +158,7 @@ public class ServerConnection {
                     }
                 } catch (EOFException | SocketException e) {
                     interrupt();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }

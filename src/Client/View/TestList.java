@@ -8,6 +8,7 @@ package Client.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Demonstrates how to make a JList that holds JPanels.
@@ -28,7 +29,7 @@ public class TestList {
         // POPULATE LIST
         for (int i = 0; i < 20; i++) {
             ChatListItem chatListItem = new ChatListItem();
-            chatListItem.itemText = "ListItem " + String.valueOf(i);
+            chatListItem.itemText = "ListItem " + i;
             if(i % 4 == 0){
                 chatListItem.imagePath = "files/avatars/troll.png";
             }
@@ -53,7 +54,7 @@ public class TestList {
     /**
      * A struct of data, representing one 'row' or item in the list.
      */
-    public class ChatListItem {
+    public static class ChatListItem {
         private String itemText;
         private String imagePath;
 
@@ -101,7 +102,7 @@ public class TestList {
 
             lblText.setText(chatListItem.itemText);
 
-            if(chatListItem.imagePath == ""){
+            if(Objects.equals(chatListItem.imagePath, "")){
                 lblImage.setIcon(null);
             }
             else {

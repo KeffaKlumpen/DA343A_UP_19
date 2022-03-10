@@ -37,9 +37,7 @@ public class SouthPanel extends JPanel {
         // TODO: Resize icons..?
         btnMyImageIcon = new JButton();
         btnMyImageIcon.setPreferredSize(new Dimension(height, height));
-        btnMyImageIcon.addActionListener(e -> {
-            controller.changeUserIcon();
-        });
+        btnMyImageIcon.addActionListener(e -> controller.changeUserIcon());
         add(btnMyImageIcon);
 
         lblMyUserName = new JLabel();
@@ -53,16 +51,12 @@ public class SouthPanel extends JPanel {
 
         btnMessageIcon = new JButton();
         btnMessageIcon.setPreferredSize(new Dimension(height, height));
-        btnMessageIcon.addActionListener(e -> {
-            controller.selectMessageIcon();
-        });
+        btnMessageIcon.addActionListener(e -> controller.selectMessageIcon());
         add(btnMessageIcon);
 
         JButton btnSendMessage = new JButton("Send");
         btnSendMessage.setPreferredSize(new Dimension(150, height));
-        btnSendMessage.addActionListener(e -> {
-            controller.sendChatMessage();
-        });
+        btnSendMessage.addActionListener(e -> controller.sendChatMessage());
         add(btnSendMessage);
     }
 

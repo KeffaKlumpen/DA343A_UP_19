@@ -57,22 +57,23 @@ public class ChatMessage extends Message {
     }
 
     public String toDebugString() {
-        final StringBuilder sb = new StringBuilder("ChatMessage{");
-        sb.append("msgText='").append(msgText).append('\'');
-        sb.append(", msgIcon=").append(msgIcon);
-        sb.append(", sender=").append(sender);
-        sb.append(", recipients=").append(Arrays.toString(recipients));
-        sb.append('}');
-        return sb.toString();
+        String sb = "ChatMessage{" + "msgText='" + msgText + '\'' +
+                ", msgIcon=" + msgIcon +
+                ", sender=" + sender +
+                ", recipients=" + Arrays.toString(recipients) +
+                '}';
+        return sb;
     }
 
     public String getRecipientsNames(){
         String text = "";
         text += recipients[0].getUsername();
 
+        StringBuilder textBuilder = new StringBuilder(text);
         for(int i = 1; i < recipients.length; i++){
-            text += ", " + recipients[i].getUsername();
+            textBuilder.append(", ").append(recipients[i].getUsername());
         }
+        text = textBuilder.toString();
         return text;
     }
 
@@ -82,7 +83,7 @@ public class ChatMessage extends Message {
             And add day/month/year information if message was sent on a different day/month/year. */
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
         String str = String.format("[%s] %s: %s",
-                getReachedServerTime().toLocalTime().format(dtf).toString(),
+                getReachedServerTime().toLocalTime().format(dtf),
                 getSender().getUsername(),
                 getMsgText());
 

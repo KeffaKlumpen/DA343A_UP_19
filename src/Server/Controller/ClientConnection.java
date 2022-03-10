@@ -11,14 +11,13 @@ import Model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 /**
  * A TCP-Connection representing the servers connection to a client.
- * Responsible for transfering messages between its Input/Output and the ServerController.
+ * Responsible for transferring messages between its Input/Output and the ServerController.
  */
 public class ClientConnection {
     private User user;
@@ -109,9 +108,7 @@ public class ClientConnection {
                 Logger.logUserStatus(newUser.getUsername(), "online");
 
                 System.out.println("Input thread processed UserInfo");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
 
@@ -126,8 +123,8 @@ public class ClientConnection {
                         controller.incomingChatMessage(chatMessage);
                     }
                     else if (msg instanceof ContactListUpdate contactListUpdate){
-                        System.out.println("Contact List update incomming..");
-                        Logger.log(String.format("Recieved ContactList update from: %s",
+                        System.out.println("Contact List update incoming..");
+                        Logger.log(String.format("Received ContactList update from: %s",
                                 contactListUpdate.getUser().getUsername()));
                         controller.incomingContactListUpdate(contactListUpdate);
                     }
@@ -149,10 +146,7 @@ public class ClientConnection {
                         e.printStackTrace();
                         e2.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
@@ -196,9 +190,7 @@ public class ClientConnection {
                     if(msg instanceof ServerUpdate su){
                         Logger.log("Sending ServerUpdate to " + getUser().getUsername());
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
             }

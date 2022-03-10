@@ -7,7 +7,6 @@ import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -184,8 +183,8 @@ public class SouthPanel extends JPanel implements ActionListener {
     //LÄGGER TILL MÅNADER I COMBOBOXARNA
     private void buildMonthsList(JComboBox monthsList) {
         String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        for (int monthCount = 0; monthCount < months.length; monthCount++) {
-            monthsList.addItem(months[monthCount]);
+        for (String month : months) {
+            monthsList.addItem(month);
         }
     }
     //LÄGGER TILL DAGAR I COMBOBOXARNA

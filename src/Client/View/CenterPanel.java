@@ -9,7 +9,6 @@ package Client.View;
 import Client.Controller.ClientController;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class CenterPanel extends JPanel {
     private final ChatMessagePanel messagePanel;

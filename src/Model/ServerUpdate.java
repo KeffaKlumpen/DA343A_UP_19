@@ -33,11 +33,10 @@ public class ServerUpdate extends Message {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ServerUpdate{");
-        sb.append("newUser=").append(newUser);
-        sb.append(", currentlyConnectedUsers=").append(currentlyConnectedUsers.length);
-        sb.append('}');
-        return sb.toString();
+        String sb = "ServerUpdate{" + "newUser=" + newUser +
+                ", currentlyConnectedUsers=" + currentlyConnectedUsers.length +
+                '}';
+        return sb;
     }
 
 }
